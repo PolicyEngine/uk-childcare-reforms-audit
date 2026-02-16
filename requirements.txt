@@ -1,0 +1,2 @@
+policyengine-uk>=2.72.3
+numpy
