@@ -1,158 +1,239 @@
 analysis,scenario,metric,value,year
-baseline,baseline,tax_free_childcare,475723777.4318628,2026
-baseline,baseline,uc_childcare_element,8001960020.945348,2026
-baseline,baseline,WTC_childcare_element,116327486.28592406,2026
-baseline,baseline,universal_childcare_entitlement,1575312498.7830513,2026
-baseline,baseline,targeted_childcare_entitlement,536557148.9014459,2026
-baseline,baseline,extended_childcare_entitlement,4756602480.352056,2026
-baseline,baseline,care_to_learn,344776485.8829975,2026
-baseline,baseline,total,15807259898.582685,2026
-takeup,Tax-Free Childcare,calibrated_0.58,475723777.4318628,2026
-takeup,Tax-Free Childcare,takeup_0.25,205053352.3413202,2026
-takeup,Tax-Free Childcare,takeup_0.5,410106704.6826404,2026
-takeup,Tax-Free Childcare,takeup_0.75,615160057.0239605,2026
-takeup,Tax-Free Childcare,takeup_1.0,820213409.3652807,2026
-takeup,Extended Childcare Entitlement,calibrated_0.81,4756602480.352056,2026
-takeup,Extended Childcare Entitlement,takeup_0.25,1468087185.2938442,2026
-takeup,Extended Childcare Entitlement,takeup_0.5,2936174370.5876884,2026
-takeup,Extended Childcare Entitlement,takeup_0.75,4404261555.881533,2026
-takeup,Extended Childcare Entitlement,takeup_1.0,5872348741.175377,2026
-takeup,Universal Childcare Entitlement,calibrated_0.56,1575312498.7830513,2026
-takeup,Universal Childcare Entitlement,takeup_0.25,703264508.3852906,2026
-takeup,Universal Childcare Entitlement,takeup_0.5,1406529016.7705812,2026
-takeup,Universal Childcare Entitlement,takeup_0.75,2109793525.1558719,2026
-takeup,Universal Childcare Entitlement,takeup_1.0,2813058033.5411625,2026
-takeup,Targeted Childcare Entitlement,calibrated_0.6,536557148.9014459,2026
-takeup,Targeted Childcare Entitlement,takeup_0.25,223565478.7089358,2026
-takeup,Targeted Childcare Entitlement,takeup_0.5,447130957.4178716,2026
-takeup,Targeted Childcare Entitlement,takeup_0.75,670696436.1268075,2026
-takeup,Targeted Childcare Entitlement,takeup_1.0,894261914.8357432,2026
-uc_caps,Baseline,uc_childcare_element,8001960020.945348,2026
-uc_caps,+50% caps,uc_childcare_element,8091617237.309662,2026
-uc_caps,+50% caps,delta,89657216.36431408,2026
-uc_caps,Double caps,uc_childcare_element,8105398829.235993,2026
-uc_caps,Double caps,delta,103438808.2906456,2026
-uc_coverage,Baseline (85%),uc_childcare_element,8001960020.945348,2026
-uc_coverage,90% coverage,uc_childcare_element,8435137527.011293,2026
-uc_coverage,90% coverage,delta,433177506.0659456,2026
-uc_coverage,95% coverage,uc_childcare_element,8855354220.171087,2026
-uc_coverage,95% coverage,delta,853394199.2257395,2026
-uc_coverage,100% coverage,uc_childcare_element,9272634676.023994,2026
-uc_coverage,100% coverage,delta,1270674655.0786467,2026
-extended_hours,Baseline (current phased),extended_childcare_entitlement,4756602480.352056,2026
-extended_hours,30hrs all ages 1-4 (full rollout),extended_childcare_entitlement,4756602480.352056,2026
+baseline,baseline,tax_free_childcare,567651838.5925173,2026
+baseline,baseline,uc_childcare_element,8385002200.214678,2026
+baseline,baseline,WTC_childcare_element,133972049.56544673,2026
+baseline,baseline,universal_childcare_entitlement,1600348022.0942993,2026
+baseline,baseline,targeted_childcare_entitlement,567707403.0247962,2026
+baseline,baseline,extended_childcare_entitlement,5457739772.036093,2026
+baseline,baseline,care_to_learn,414484872.89836407,2026
+baseline,baseline,total,17126906158.426193,2026
+baseline,baseline_2025,tax_free_childcare,565300633.9338655,2025
+baseline,baseline_2025,uc_childcare_element,8162802920.753895,2025
+baseline,baseline_2025,WTC_childcare_element,130235049.3539553,2025
+baseline,baseline_2025,universal_childcare_entitlement,1547831054.7102933,2025
+baseline,baseline_2025,targeted_childcare_entitlement,546698623.5711393,2025
+baseline,baseline_2025,extended_childcare_entitlement,4738584917.557084,2025
+baseline,baseline_2025,care_to_learn,412915776.7148924,2025
+baseline,baseline_2025,total,16104368976.595123,2025
+baseline,baseline_2025,external_total,10500000000.0,2025
+baseline,baseline_2024,tax_free_childcare,557290761.840335,2024
+baseline,baseline_2024,uc_childcare_element,7841702068.615434,2024
+baseline,baseline_2024,WTC_childcare_element,124991837.74880752,2024
+baseline,baseline_2024,universal_childcare_entitlement,1489075933.7557733,2024
+baseline,baseline_2024,targeted_childcare_entitlement,529395737.07151294,2024
+baseline,baseline_2024,extended_childcare_entitlement,2332068259.5672765,2024
+baseline,baseline_2024,care_to_learn,409964033.35091114,2024
+baseline,baseline_2024,total,13284488631.95005,2024
+baseline,baseline_2024,external_total,8400000000.0,2024
+takeup,Tax-Free Childcare,calibrated_0.58,567651838.5925173,2026
+takeup,Tax-Free Childcare,takeup_0.25,244677516.63470572,2026
+takeup,Tax-Free Childcare,takeup_0.5,489355033.26941144,2026
+takeup,Tax-Free Childcare,takeup_0.75,734032549.9041171,2026
+takeup,Tax-Free Childcare,takeup_1.0,978710066.5388229,2026
+takeup,Extended Childcare Entitlement,calibrated_0.81,5457739772.036093,2026
+takeup,Extended Childcare Entitlement,takeup_0.25,1684487583.961757,2026
+takeup,Extended Childcare Entitlement,takeup_0.5,3368975167.923514,2026
+takeup,Extended Childcare Entitlement,takeup_0.75,5053462751.885271,2026
+takeup,Extended Childcare Entitlement,takeup_1.0,6737950335.847028,2026
+takeup,Universal Childcare Entitlement,calibrated_0.56,1600348022.0942993,2026
+takeup,Universal Childcare Entitlement,takeup_0.25,714441081.2920978,2026
+takeup,Universal Childcare Entitlement,takeup_0.5,1428882162.5841956,2026
+takeup,Universal Childcare Entitlement,takeup_0.75,2143323243.8762934,2026
+takeup,Universal Childcare Entitlement,takeup_1.0,2857764325.168391,2026
+takeup,Targeted Childcare Entitlement,calibrated_0.6,567707403.0247962,2026
+takeup,Targeted Childcare Entitlement,takeup_0.25,236544751.26033178,2026
+takeup,Targeted Childcare Entitlement,takeup_0.5,473089502.52066356,2026
+takeup,Targeted Childcare Entitlement,takeup_0.75,709634253.7809954,2026
+takeup,Targeted Childcare Entitlement,takeup_1.0,946179005.0413271,2026
+uc_caps,Baseline,uc_childcare_element,8385002200.214678,2026
+uc_caps,+50% caps,uc_childcare_element,8476598012.569071,2026
+uc_caps,+50% caps,delta,91595812.354393,2026
+uc_caps,Double caps,uc_childcare_element,8490036023.466588,2026
+uc_caps,Double caps,delta,105033823.25191021,2026
+uc_caps,HMT 2023 uprating like-for-like,delta,375001060.58667755,2023
+uc_caps,HMT 2023 uprating like-for-like,external,67500000.0,2023
+uc_coverage,Baseline (85%),uc_childcare_element,8385002200.214678,2026
+uc_coverage,90% coverage,uc_childcare_element,8843802847.35096,2026
+uc_coverage,90% coverage,delta,458800647.13628197,2026
+uc_coverage,95% coverage,uc_childcare_element,9296593067.11715,2026
+uc_coverage,95% coverage,delta,911590866.9024715,2026
+uc_coverage,100% coverage,uc_childcare_element,9746684276.022413,2026
+uc_coverage,100% coverage,delta,1361682075.8077354,2026
+uc_coverage,"CPAG like-for-like (100%, 2024)",delta,1281307063.426507,2024
+uc_coverage,"CPAG like-for-like (100%, 2024)",external,150000000.0,2024
+extended_hours,Baseline (current phased),extended_childcare_entitlement,5457739772.036093,2026
+extended_hours,30hrs all ages 1-4 (full rollout),extended_childcare_entitlement,5457739772.036093,2026
 extended_hours,30hrs all ages 1-4 (full rollout),delta,0.0,2026
-extended_hours,40hrs all ages 1-4 (IPPR wrap-around),extended_childcare_entitlement,4756602480.352056,2026
+extended_hours,40hrs all ages 1-4 (IPPR wrap-around),extended_childcare_entitlement,5457739772.036093,2026
 extended_hours,40hrs all ages 1-4 (IPPR wrap-around),delta,0.0,2026
-tfc_rate,Baseline (20%),tax_free_childcare,475723777.4318628,2026
-tfc_rate,25% top-up,tax_free_childcare,545611866.6516246,2026
-tfc_rate,25% top-up,delta,69888089.21976179,2026
-tfc_rate,33% top-up,tax_free_childcare,634963295.0085421,2026
-tfc_rate,33% top-up,delta,159239517.5766793,2026
-tfc_rate,50% top-up,tax_free_childcare,767315001.8703973,2026
-tfc_rate,50% top-up,delta,291591224.43853456,2026
-tfc_caps,Baseline (£2k/£4k),tax_free_childcare,475723777.4318628,2026
-tfc_caps,£3k/£6k caps,tax_free_childcare,555700168.2443701,2026
-tfc_caps,£3k/£6k caps,delta,79976390.81250733,2026
-tfc_caps,£4k/£8k caps (double),tax_free_childcare,583581480.1667926,2026
-tfc_caps,£4k/£8k caps (double),delta,107857702.73492986,2026
-income_cap,Baseline (£100k cap),ECE,4756602480.352056,2026
-income_cap,Baseline (£100k cap),TFC,475723777.4318628,2026
-income_cap,Baseline (£100k cap),Combined,5232326257.783918,2026
-income_cap,£150k cap,ECE,4945950586.634533,2026
-income_cap,£150k cap,TFC,548827188.4810679,2026
-income_cap,£150k cap,Combined,5494777775.115601,2026
-income_cap,£150k cap,delta,262451517.3316822,2026
-income_cap,£200k cap,ECE,5010346458.836922,2026
-income_cap,£200k cap,TFC,564629280.6229542,2026
-income_cap,£200k cap,Combined,5574975739.459876,2026
-income_cap,£200k cap,delta,342649481.6759577,2026
-income_cap,No cap (£10m),ECE,5134793991.874909,2026
-income_cap,No cap (£10m),TFC,612279790.8321881,2026
-income_cap,No cap (£10m),Combined,5747073782.707098,2026
-income_cap,No cap (£10m),delta,514747524.9231796,2026
-funding_rates,Baseline,UCE,1575312498.7830513,2026
-funding_rates,Baseline,TCE,536557148.9014459,2026
-funding_rates,Baseline,ECE,4756602480.352056,2026
-funding_rates,Baseline,Combined,6868472128.036552,2026
-funding_rates,+20% rates,UCE,1783252612.230637,2026
-funding_rates,+20% rates,TCE,607282565.8294008,2026
-funding_rates,+20% rates,ECE,5382112949.938787,2026
-funding_rates,+20% rates,Combined,7772648127.998825,2026
-funding_rates,+20% rates,delta,904175999.9622726,2026
-funding_rates,+50% rates,UCE,2227802822.2657857,2026
-funding_rates,+50% rates,TCE,758797748.8493077,2026
-funding_rates,+50% rates,ECE,6726775036.979195,2026
-funding_rates,+50% rates,Combined,9713375608.094288,2026
-funding_rates,+50% rates,delta,2844903480.0577354,2026
-funding_rates,Double rates,UCE,2970403907.269814,2026
-funding_rates,Double rates,TCE,1011730366.6896722,2026
-funding_rates,Double rates,ECE,8969033390.516071,2026
-funding_rates,Double rates,Combined,12951167664.475557,2026
-funding_rates,Double rates,delta,6082695536.439005,2026
-targeted_eligibility,Baseline,targeted_childcare_entitlement,536557148.9014459,2026
-targeted_eligibility,UC limit £20k,targeted_childcare_entitlement,536557148.9014459,2026
+extended_hours,OBR expansion like-for-like (2025),delta,3210884546.3380814,2025
+extended_hours,OBR expansion like-for-like (2025),external,3300000000.0,2025
+extended_hours,OBR expansion like-for-like (2027),delta,3965210282.0730677,2027
+extended_hours,OBR expansion like-for-like (2027),external,4100000000.0,2027
+extended_hours,DfE expansion like-for-like (2024),delta,828214494.5006502,2024
+extended_hours,DfE expansion like-for-like (2024),external,1700000000.0,2024
+extended_hours,DfE expansion like-for-like (2025),delta,3210884546.3380814,2025
+extended_hours,DfE expansion like-for-like (2025),external,3300000000.0,2025
+extended_hours,DfE expansion like-for-like (2026),delta,3853261887.4836097,2026
+extended_hours,DfE expansion like-for-like (2026),external,4100000000.0,2026
+tfc_rate,Baseline (20%),tax_free_childcare,567651838.5925173,2026
+tfc_rate,25% top-up,tax_free_childcare,645332672.8533467,2026
+tfc_rate,25% top-up,delta,77680834.26082945,2026
+tfc_rate,33% top-up,tax_free_childcare,743059355.6620134,2026
+tfc_rate,33% top-up,delta,175407517.06949615,2026
+tfc_rate,50% top-up,tax_free_childcare,888933825.0540149,2026
+tfc_rate,50% top-up,delta,321281986.46149766,2026
+tfc_caps,Baseline (£2k/£4k),tax_free_childcare,567651838.5925173,2026
+tfc_caps,£3k/£6k caps,tax_free_childcare,682954023.9174916,2026
+tfc_caps,£3k/£6k caps,delta,115302185.3249743,2026
+tfc_caps,£4k/£8k caps (double),tax_free_childcare,701943894.351582,2026
+tfc_caps,£4k/£8k caps (double),delta,134292055.7590648,2026
+income_cap,Baseline (£100k cap),ECE,5457739772.036093,2026
+income_cap,Baseline (£100k cap),TFC,567651838.5925173,2026
+income_cap,Baseline (£100k cap),Combined,6025391610.62861,2026
+income_cap,£120k cap (Govt lower),ECE,5529414985.200405,2026
+income_cap,£120k cap (Govt lower),TFC,592699297.1066968,2026
+income_cap,£120k cap (Govt lower),Combined,6122114282.307102,2026
+income_cap,£120k cap (Govt lower),delta,96722671.67849255,2026
+income_cap,£150k cap,ECE,5702537033.74375,2026
+income_cap,£150k cap,TFC,643115471.6955787,2026
+income_cap,£150k cap,Combined,6345652505.439328,2026
+income_cap,£150k cap,delta,320260894.81071854,2026
+income_cap,£160k cap (Govt upper),ECE,5757030226.32934,2026
+income_cap,£160k cap (Govt upper),TFC,648809032.0373907,2026
+income_cap,£160k cap (Govt upper),Combined,6405839258.366731,2026
+income_cap,£160k cap (Govt upper),delta,380447647.73812103,2026
+income_cap,£200k cap,ECE,5785641749.576497,2026
+income_cap,£200k cap,TFC,659348829.9111774,2026
+income_cap,£200k cap,Combined,6444990579.487675,2026
+income_cap,£200k cap,delta,419598968.85906506,2026
+income_cap,No cap (£10m),ECE,5923911337.062106,2026
+income_cap,No cap (£10m),TFC,709147677.1278365,2026
+income_cap,No cap (£10m),Combined,6633059014.189942,2026
+income_cap,No cap (£10m),delta,607667403.5613327,2026
+income_cap,Govt estimate (£120k-£160k),external,1400000000.0,2026
+funding_rates,Baseline,UCE,1600348022.0942993,2026
+funding_rates,Baseline,TCE,567707403.0247962,2026
+funding_rates,Baseline,ECE,5457739772.036093,2026
+funding_rates,Baseline,Combined,7625795197.155189,2026
+funding_rates,+20% rates,UCE,1811592806.5589573,2026
+funding_rates,+20% rates,TCE,642538840.5598685,2026
+funding_rates,+20% rates,ECE,6175159654.968151,2026
+funding_rates,+20% rates,Combined,8629291302.086977,2026
+funding_rates,+20% rates,delta,1003496104.9317884,2026
+funding_rates,+50% rates,UCE,2263207993.9588857,2026
+funding_rates,+50% rates,TCE,802850358.6286689,2026
+funding_rates,+50% rates,ECE,7718321599.2965765,2026
+funding_rates,+50% rates,Combined,10784379951.88413,2026
+funding_rates,+50% rates,delta,3158584754.728942,2026
+funding_rates,Double rates,UCE,3017610805.1530747,2026
+funding_rates,Double rates,TCE,1070467181.7544215,2026
+funding_rates,Double rates,ECE,10291095505.24347,2026
+funding_rates,Double rates,Combined,14379173492.150965,2026
+funding_rates,Double rates,delta,6753378294.995776,2026
+funding_rates,WBG like-for-like (close funding gap),external_total_needed,9400000000.0,2026
+funding_rates,WBG like-for-like (close funding gap),external_gap,5200000000.0,2026
+targeted_eligibility,Baseline,targeted_childcare_entitlement,567707403.0247962,2026
+targeted_eligibility,UC limit £20k,targeted_childcare_entitlement,567707403.0247962,2026
 targeted_eligibility,UC limit £20k,delta,0.0,2026
-targeted_eligibility,UC limit £25k,targeted_childcare_entitlement,536567408.38395536,2026
-targeted_eligibility,UC limit £25k,delta,10259.482509434223,2026
-targeted_eligibility,UC limit £30k,targeted_childcare_entitlement,564465996.8979369,2026
-targeted_eligibility,UC limit £30k,delta,27908847.996491015,2026
-extend_weeks,Baseline (38 weeks),UCE,1575312498.7830513,2026
-extend_weeks,Baseline (38 weeks),TCE,536557148.9014459,2026
-extend_weeks,Baseline (38 weeks),ECE,4756602480.352056,2026
-extend_weeks,Baseline (38 weeks),Combined,6868472128.036552,2026
-extend_weeks,44 weeks,UCE,1575312498.7830513,2026
-extend_weeks,44 weeks,TCE,536557148.9014459,2026
-extend_weeks,44 weeks,ECE,5507645008.939102,2026
-extend_weeks,44 weeks,Combined,7619514656.623599,2026
-extend_weeks,44 weeks,delta,751042528.5870466,2026
-extend_weeks,48 weeks (IPPR),UCE,1575312498.7830513,2026
-extend_weeks,48 weeks (IPPR),TCE,536557148.9014459,2026
-extend_weeks,48 weeks (IPPR),ECE,6008339947.931828,2026
-extend_weeks,48 weeks (IPPR),Combined,8120209595.616324,2026
-extend_weeks,48 weeks (IPPR),delta,1251737467.579772,2026
-extend_weeks,52 weeks (full year),UCE,1575312498.7830513,2026
-extend_weeks,52 weeks (full year),TCE,536557148.9014459,2026
-extend_weeks,52 weeks (full year),ECE,6509034978.297346,2026
-extend_weeks,52 weeks (full year),Combined,8620904625.981844,2026
-extend_weeks,52 weeks (full year),delta,1752432497.9452915,2026
-min_work_hours,Baseline (16 hrs),ECE,4756602480.352056,2026
-min_work_hours,Baseline (16 hrs),TFC,475723777.4318628,2026
-min_work_hours,Baseline (16 hrs),Combined,5232326257.783918,2026
-min_work_hours,12 hrs/week,ECE,5199517300.986586,2026
-min_work_hours,12 hrs/week,TFC,514215706.9886277,2026
-min_work_hours,12 hrs/week,Combined,5713733007.975213,2026
-min_work_hours,12 hrs/week,delta,481406750.19129467,2026
-min_work_hours,8 hrs/week,ECE,5462344838.201812,2026
-min_work_hours,8 hrs/week,TFC,517090208.19596845,2026
-min_work_hours,8 hrs/week,Combined,5979435046.39778,2026
-min_work_hours,8 hrs/week,delta,747108788.613862,2026
-min_work_hours,No minimum (1 hr),ECE,5717916214.870032,2026
-min_work_hours,No minimum (1 hr),TFC,517195253.21997875,2026
-min_work_hours,No minimum (1 hr),Combined,6235111468.090011,2026
-min_work_hours,No minimum (1 hr),delta,1002785210.3060923,2026
-fiscal,UC 100% coverage + double caps,net_cost,270519395.78100586,2026
-fiscal,30hrs all 1-4yrs + 48 weeks,net_cost,1251737507.5874023,2026
-fiscal,Double funding rates,net_cost,6082696247.279541,2026
-fiscal,TFC 50% top-up + £4k cap,net_cost,800723670.1054688,2026
-distributional,decile_1,total_gain,2132079.0,2026
-distributional,decile_1,avg_gain_per_hh,1.1424857951462764,2026
-distributional,decile_2,total_gain,5593022.0,2026
-distributional,decile_2,avg_gain_per_hh,1.8342907049086188,2026
-distributional,decile_3,total_gain,35826592.0,2026
-distributional,decile_3,avg_gain_per_hh,8.075130424747636,2026
-distributional,decile_4,total_gain,34051172.0,2026
-distributional,decile_4,avg_gain_per_hh,9.109349495786102,2026
-distributional,decile_5,total_gain,123670304.0,2026
-distributional,decile_5,avg_gain_per_hh,27.749449141019003,2026
-distributional,decile_6,total_gain,30934164.0,2026
-distributional,decile_6,avg_gain_per_hh,7.630403694660657,2026
-distributional,decile_7,total_gain,30847928.0,2026
-distributional,decile_7,avg_gain_per_hh,9.57173922503887,2026
-distributional,decile_8,total_gain,6890096.0,2026
-distributional,decile_8,avg_gain_per_hh,1.8011966680678684,2026
-distributional,decile_9,total_gain,302874.0,2026
-distributional,decile_9,avg_gain_per_hh,0.1371549209287666,2026
-distributional,decile_10,total_gain,271165.65625,2026
-distributional,decile_10,avg_gain_per_hh,0.21930552038330758,2026
-distributional,all,total_gain,270519396.65625,2026
+targeted_eligibility,UC limit £25k,targeted_childcare_entitlement,567750680.5447319,2026
+targeted_eligibility,UC limit £25k,delta,43277.51993560791,2026
+targeted_eligibility,UC limit £30k,targeted_childcare_entitlement,605506314.9458568,2026
+targeted_eligibility,UC limit £30k,delta,37798911.92106056,2026
+targeted_eligibility,Sutton Trust (30hrs for disadv 2yr-olds),external,165000000.0,2026
+targeted_eligibility,"Sutton Trust (universalise 30hrs, 3-4yr)",external,250000000.0,2026
+extend_weeks,Baseline (38 weeks),UCE,1600348022.0942993,2026
+extend_weeks,Baseline (38 weeks),TCE,567707403.0247962,2026
+extend_weeks,Baseline (38 weeks),ECE,5457739772.036093,2026
+extend_weeks,Baseline (38 weeks),Combined,7625795197.155189,2026
+extend_weeks,44 weeks,UCE,1600348022.0942993,2026
+extend_weeks,44 weeks,TCE,567707403.0247962,2026
+extend_weeks,44 weeks,ECE,6319488187.071682,2026
+extend_weeks,44 weeks,Combined,8487543612.190778,2026
+extend_weeks,44 weeks,delta,861748415.0355892,2026
+extend_weeks,47 weeks (ResFound like-for-like),UCE,1600348022.0942993,2026
+extend_weeks,47 weeks (ResFound like-for-like),TCE,567707403.0247962,2026
+extend_weeks,47 weeks (ResFound like-for-like),ECE,6750362384.696436,2026
+extend_weeks,47 weeks (ResFound like-for-like),Combined,8918417809.81553,2026
+extend_weeks,47 weeks (ResFound like-for-like),delta,1292622612.6603422,2026
+extend_weeks,48 weeks (IPPR),UCE,1600348022.0942993,2026
+extend_weeks,48 weeks (IPPR),TCE,567707403.0247962,2026
+extend_weeks,48 weeks (IPPR),ECE,6893987100.655807,2026
+extend_weeks,48 weeks (IPPR),Combined,9062042525.774902,2026
+extend_weeks,48 weeks (IPPR),delta,1436247328.6197138,2026
+extend_weeks,52 weeks (full year),UCE,1600348022.0942993,2026
+extend_weeks,52 weeks (full year),TCE,567707403.0247962,2026
+extend_weeks,52 weeks (full year),ECE,7468486044.776759,2026
+extend_weeks,52 weeks (full year),Combined,9636541469.895855,2026
+extend_weeks,52 weeks (full year),delta,2010746272.7406664,2026
+extend_weeks,ResFound like-for-like (25hrs/47wks),external,2100000000.0,2026
+min_work_hours,Baseline (16 hrs),ECE,5457739772.036093,2026
+min_work_hours,Baseline (16 hrs),TFC,567651838.5925173,2026
+min_work_hours,Baseline (16 hrs),Combined,6025391610.62861,2026
+min_work_hours,12 hrs/week,ECE,5941764074.47482,2026
+min_work_hours,12 hrs/week,TFC,618035165.4058957,2026
+min_work_hours,12 hrs/week,Combined,6559799239.880716,2026
+min_work_hours,12 hrs/week,delta,534407629.25210667,2026
+min_work_hours,8 hrs/week,ECE,6140784363.17292,2026
+min_work_hours,8 hrs/week,TFC,621006220.0313929,2026
+min_work_hours,8 hrs/week,Combined,6761790583.204313,2026
+min_work_hours,8 hrs/week,delta,736398972.5757036,2026
+min_work_hours,No minimum (1 hr),ECE,6330483012.728193,2026
+min_work_hours,No minimum (1 hr),TFC,621119236.9296471,2026
+min_work_hours,No minimum (1 hr),Combined,6951602249.657841,2026
+min_work_hours,No minimum (1 hr),delta,926210639.0292311,2026
+min_work_hours,ECE only no min (Sutton Trust like-for-like),ECE,6330483012.728193,2026
+min_work_hours,ECE only no min (Sutton Trust like-for-like),TFC,567651838.5925173,2026
+min_work_hours,ECE only no min (Sutton Trust like-for-like),Combined,6898134851.32071,2026
+min_work_hours,ECE only no min (Sutton Trust like-for-like),delta,872743240.6921005,2026
+min_work_hours,Sutton Trust like-for-like (ECE only),external,250000000.0,2026
+fiscal,UC 100% coverage + double caps,net_cost,297973241.28808594,2026
+fiscal,30hrs all 1-4yrs + 48 weeks,net_cost,1436247402.4401855,2026
+fiscal,Double funding rates,net_cost,6753378392.301758,2026
+fiscal,TFC 50% top-up + £4k cap,net_cost,925307698.560791,2026
+fiscal,UC 100% coverage + double caps,external,150000000.0,2026
+fiscal,30hrs all 1-4yrs + 48 weeks,external,2100000000.0,2026
+fiscal,Double funding rates,external,5200000000.0,2026
+distributional,decile_1,total_gain,1837490.25,2026
+distributional,decile_1,avg_gain_per_hh,0.9963995217256918,2026
+distributional,decile_2,total_gain,5466908.0,2026
+distributional,decile_2,avg_gain_per_hh,1.7340458043838443,2026
+distributional,decile_3,total_gain,34003692.0,2026
+distributional,decile_3,avg_gain_per_hh,7.836506735552836,2026
+distributional,decile_4,total_gain,24316748.0,2026
+distributional,decile_4,avg_gain_per_hh,6.783025996801621,2026
+distributional,decile_5,total_gain,123878968.0,2026
+distributional,decile_5,avg_gain_per_hh,28.80388767366793,2026
+distributional,decile_6,total_gain,13895538.0,2026
+distributional,decile_6,avg_gain_per_hh,3.312237379183698,2026
+distributional,decile_7,total_gain,42962248.0,2026
+distributional,decile_7,avg_gain_per_hh,12.715911261139437,2026
+distributional,decile_8,total_gain,42685224.0,2026
+distributional,decile_8,avg_gain_per_hh,11.492802934129367,2026
+distributional,decile_9,total_gain,654511.625,2026
+distributional,decile_9,avg_gain_per_hh,0.2773685187449266,2026
+distributional,decile_10,total_gain,8271918.5,2026
+distributional,decile_10,avg_gain_per_hh,6.644765714374077,2026
+distributional,all,total_gain,297973246.375,2026
+wbg_true_cost,Baseline (DfE 2025-26 rates),UCE,1600348022.0942993,2026
+wbg_true_cost,Baseline (DfE 2025-26 rates),TCE,567707403.0247962,2026
+wbg_true_cost,Baseline (DfE 2025-26 rates),ECE,5457739772.036093,2026
+wbg_true_cost,Baseline (DfE 2025-26 rates),Combined,7625795197.155189,2026
+wbg_true_cost,WBG true cost rates,UCE,2417167724.4297185,2026
+wbg_true_cost,WBG true cost rates,TCE,852624484.8059607,2026
+wbg_true_cost,WBG true cost rates,ECE,8115229577.7643385,2026
+wbg_true_cost,WBG true cost rates,Combined,11385021787.000017,2026
+wbg_true_cost,WBG true cost rates,delta,3759226589.8448286,2026
+ifs_min_wage_comp,Baseline (DfE 2025-26 rates),UCE,1600348022.0942993,2026
+ifs_min_wage_comp,Baseline (DfE 2025-26 rates),TCE,567707403.0247962,2026
+ifs_min_wage_comp,Baseline (DfE 2025-26 rates),ECE,5457739772.036093,2026
+ifs_min_wage_comp,Baseline (DfE 2025-26 rates),Combined,7625795197.155189,2026
+ifs_min_wage_comp,IFS min wage compensation (+18%),UCE,1852648712.703329,2026
+ifs_min_wage_comp,IFS min wage compensation (+18%),TCE,650942277.4045715,2026
+ifs_min_wage_comp,IFS min wage compensation (+18%),ECE,6269445066.26372,2026
+ifs_min_wage_comp,IFS min wage compensation (+18%),Combined,8773036056.37162,2026
+ifs_min_wage_comp,IFS min wage compensation (+18%),delta,1147240859.2164316,2026
+ifs_entitlement_forecast,PE baseline (2026),extended_childcare_entitlement,5457739772.036093,2026
+ifs_entitlement_forecast,PE baseline (2028),extended_childcare_entitlement,5847384997.743698,2028
+ifs_entitlement_forecast,IFS forecast (2028-29),external_low,5000000000.0,2028
+ifs_entitlement_forecast,IFS forecast (2028-29),external_high,5300000000.0,2028
