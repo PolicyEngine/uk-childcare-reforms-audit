@@ -28,7 +28,9 @@ Thumbs.db
 *.json
 output/
 
-# Allow dashboard data
+# Allow dashboard and config files
 !dashboard/public/results.csv
+!dashboard/package.json
+!dashboard/package-lock.json
 !vercel.json
 .vercel
