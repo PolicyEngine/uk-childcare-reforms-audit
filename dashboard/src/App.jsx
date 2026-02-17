@@ -236,6 +236,48 @@ const COMPARISONS = [
     comparability: "different",
     whyDiffer: "Different reforms entirely. PE raises the UC income threshold to \u00a330k for the 15hr targeted entitlement (narrow). Sutton Trust costs giving 30hrs extended entitlement to disadvantaged 3\u20134yr-olds (much broader). Divergence is expected because these are fundamentally different policy levers.",
   },
+
+  // ── WBG TRUE COST RATES ──
+  {
+    category: "Provider Funding Rates",
+    reform: "Fund providers at WBG true cost rates (under-2s \u00a317.48/hr, age 2 \u00a313.19/hr, 3+ \u00a39.42/hr)",
+    context: "Raise DfE hourly funding rates to WBG\u2019s estimated true cost of delivery: under-2s from \u00a311.54 to \u00a317.48/hr, age 2 from \u00a38.53 to \u00a313.19/hr, age 3+ from \u00a36.12 to \u00a39.42/hr.",
+    pe: { analysis: "wbg_true_cost", scenario: "WBG true cost rates", metric: "delta" },
+    extValue: 5e9,
+    extLabel: "Women\u2019s Budget Group \u2014 additional funding needed in 2025/26",
+    sourceUrl: "https://www.wbg.org.uk/publication/updated-analysis-early-education-and-childcare/",
+    sourceRef: "Summary: \u2018the Government should allocate an additional \u00a35bn in 2025/26\u2019",
+    comparability: "similar",
+    whyDiffer: "WBG estimates \u00a35bn additional funding is needed to pay providers their true cost of delivery. PE models the same rate increases but costs them through the entitlement system (UCE + TCE + ECE). PE\u2019s lower estimate may reflect differences in population coverage or the treatment of non-entitlement funded places.",
+  },
+
+  // ── IFS MIN WAGE COMPENSATION ──
+  {
+    category: "Provider Funding Rates",
+    reform: "Compensate providers for minimum wage rises since 2017 (+18% funding rates)",
+    context: "Minimum wage rose from \u00a37.50 (2017) to \u00a311.44 (2024), a 52.5% increase. With ~70% of provider costs being staffing, this implies ~18% increase in funding rates needed to compensate.",
+    pe: { analysis: "ifs_min_wage_comp", scenario: "IFS min wage compensation (+18%)", metric: "delta" },
+    extValue: 685e6,
+    extLabel: "IFS \u2014 compensate providers for min wage rises",
+    sourceUrl: "https://ifs.org.uk/articles/complicated-costly-and-constantly-changing-childcare-system-england",
+    sourceRef: "Section \u2018Compensating providers\u2019: \u2018Compensating providers for the minimum wage increases\u2026 would require around \u00a3685 million\u2019",
+    comparability: "similar",
+    whyDiffer: "PE approximates the IFS reform as an 18% increase across all DfE funding rates (52.5% wage rise \u00d7 70% staff cost share \u00d7 partial pass-through). PE\u2019s higher estimate likely reflects modelling the full entitled population at calibrated take-up rates, while IFS may use different baseline provider numbers.",
+  },
+
+  // ── IFS ENTITLEMENT FORECAST ──
+  {
+    category: "Baseline Spending",
+    reform: "Extended childcare entitlement cost forecast (PE 2028 vs IFS 2028\u201329)",
+    context: "Baseline extended entitlement spending projected to 2028. IFS warns take-up may be higher than government forecasts, pushing costs to \u00a35.0\u20135.3bn by 2028\u201329.",
+    pe: { analysis: "ifs_entitlement_forecast", scenario: "PE baseline (2028)", metric: "extended_childcare_entitlement" },
+    extValue: 5.15e9,
+    extLabel: "IFS \u2014 entitlement forecast 2028\u201329 (midpoint of \u00a35.0\u20135.3bn range)",
+    sourceUrl: "https://ifs.org.uk/articles/popularity-new-childcare-entitlements-could-leave-spending-much-higher-initially-forecast",
+    sourceRef: "Key finding: \u2018it could spend between \u00a35.0 and \u00a35.3 billion in 2028\u201329\u2019",
+    comparability: "like-for-like",
+    whyDiffer: "Both PE and IFS model the extended childcare entitlement at high take-up for 2028\u201329. PE\u2019s estimate is modestly higher than IFS\u2019s \u00a35.0\u20135.3bn range, likely due to PE using full FRS population at calibrated take-up vs IFS\u2019s administrative data approach.",
+  },
 ];
 
 const CATEGORY_ORDER = [

@@ -36,6 +36,9 @@ from analyses import (
     min_work_hours as mod_min_hours,
     net_fiscal_impact as mod_fiscal,
     distributional as mod_distributional,
+    wbg_true_cost as mod_wbg_true_cost,
+    ifs_min_wage_comp as mod_ifs_min_wage,
+    ifs_entitlement_forecast as mod_ifs_forecast,
 )
 
 # ── Analysis registry ────────────────────────────────────────────
@@ -96,6 +99,18 @@ ANALYSES = {
     "distributional": (
         "Distributional analysis by decile",
         mod_distributional,
+    ),
+    "wbg_true_cost": (
+        "WBG true cost provider rates by age band",
+        mod_wbg_true_cost,
+    ),
+    "ifs_min_wage": (
+        "IFS compensate providers for min wage rises",
+        mod_ifs_min_wage,
+    ),
+    "ifs_forecast": (
+        "IFS revised entitlement cost forecast",
+        mod_ifs_forecast,
     ),
 }
 
