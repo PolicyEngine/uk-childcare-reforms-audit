@@ -20,7 +20,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#root { max-width: 860px; margin: 0 auto; }
+#root { max-width: 1080px; margin: 0 auto; padding: 0 1.5rem; }
 
 a { color: var(--text-secondary); }
 a:hover { color: var(--text); }
@@ -307,6 +307,12 @@ code {
 
 .comp-source a:hover {
   color: var(--text-secondary);
+}
+
+.source-ref {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* Why they differ */
