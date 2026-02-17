@@ -118,7 +118,8 @@ def write_csv(all_rows, year, out_path):
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
         writer.writeheader()
         for r in all_rows:
-            r["year"] = year
+            if "year" not in r:
+                r["year"] = year
             writer.writerow(r)
     print(f"\nCSV saved: {out_path}  ({len(all_rows)} rows)")
 

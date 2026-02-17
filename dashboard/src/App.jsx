@@ -1,752 +1,436 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Papa from "papaparse";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  CartesianGrid,
-  Legend,
-} from "recharts";
 
-const COLORS = [
-  "#2d6a4f",
-  "#40916c",
-  "#52b788",
-  "#74c69d",
-  "#95d5b2",
-  "#1b4332",
-  "#376e54",
-  "#5e9c7e",
-];
+/* ── Formatting helpers ──────────────────────────────────── */
 
-const ANALYSIS_LABELS = {
-  baseline: "Baseline spending",
-  takeup: "Take-up sensitivity",
-  uc_coverage: "UC coverage rate",
-  uc_caps: "UC caps",
-  extended_hours: "Extended hours",
-  tfc_rate: "TFC rate",
-  tfc_caps: "TFC caps",
-  income_cap: "Income cap",
-  funding_rates: "Funding rates",
-  targeted_eligibility: "Targeted eligibility",
-  extend_weeks: "Weeks per year",
-  min_work_hours: "Minimum work hours",
-  fiscal: "Net fiscal impact",
-};
-
-const METRIC_LABELS = {
-  tax_free_childcare: "Tax-Free Childcare",
-  uc_childcare_element: "UC childcare element",
-  WTC_childcare_element: "WTC childcare element",
-  universal_childcare_entitlement: "Universal entitlement",
-  targeted_childcare_entitlement: "Targeted entitlement",
-  extended_childcare_entitlement: "Extended entitlement",
-  care_to_learn: "Care to Learn",
-  total: "Total",
-  delta: "Change vs baseline",
-  net_cost: "Net cost",
-  total_gain: "Total gain",
-  avg_gain_per_hh: "Average gain per household",
-  Combined: "Combined",
-  UCE: "Universal",
-  TCE: "Targeted",
-  ECE: "Extended",
-  TFC: "Tax-Free Childcare",
-  "UC CC": "UC childcare",
-};
-
-const BENCHMARKS = {
-  baseline: {
-    description: "This section shows PolicyEngine UK\u2019s estimate of total annual government spending on each of the seven childcare programmes under current law. It serves as the reference point for all reform scenarios below.",
-    baseline: "Current policy as legislated for the selected year, with PolicyEngine-calibrated take-up rates applied.",
-    comparisons: [
-      "PolicyEngine report (2025): TFC \u00a30.7bn, extended \u00a34.4bn, universal \u00a31.8bn, targeted \u00a30.5bn",
-      "Government reported (2024): TFC \u00a30.6bn, extended \u00a32.5bn, universal \u00a31.7bn, targeted \u00a30.6bn, UC childcare ~\u00a31.0bn",
-      "IFS: total early years spending ~\u00a38.7bn in 2025\u201326",
-      "OBR: 2023 childcare expansion alone ~\u00a33.3bn in 2025\u201326",
-    ],
-    sources: [
-      { label: "PolicyEngine childcare report (June 2025)", url: "https://www.policyengine.org/uk/research/uk-childcare-report" },
-      { label: "HMRC TFC statistics (September 2025)", url: "https://www.gov.uk/government/statistics/tax-free-childcare-statistics-september-2025" },
-      { label: "IFS education spending 2025\u201326", url: "https://ifs.org.uk/publications/annual-report-education-spending-england-2025-26" },
-      { label: "OBR Spring Budget 2023 costings", url: "https://obr.uk/docs/dlm_uploads/Annexes-March-2023.pdf" },
-    ],
-  },
-  takeup: {
-    description: "This section tests how sensitive each programme\u2019s spending is to different take-up assumptions. PolicyEngine calibrates take-up rates to match official caseload data; here we vary them from 25% to 100% to show the range of possible costs.",
-    baseline: "PolicyEngine-calibrated take-up rates: TFC 58%, extended 81%, universal 56%, targeted 60% (from PolicyEngine report Table 9, matched to government caseloads).",
-    comparisons: [
-      "Government caseloads (2024): TFC 660k, extended 740k, universal 490k, targeted 130k children",
-      "Approximately 63% of children aged 0\u20134 use formal childcare (DfE 2023 survey)",
-      "IFS: only around 40% of eligible families are aware of Tax-Free Childcare",
-      "Coram 2024: parental awareness of entitlements remains low",
-    ],
-    sources: [
-      { label: "PolicyEngine childcare report (Tables 8\u20139)", url: "https://www.policyengine.org/uk/research/uk-childcare-report" },
-      { label: "DfE childcare and early years survey 2023", url: "https://www.gov.uk/government/statistics/childcare-and-early-years-survey-of-parents-2023" },
-      { label: "Coram childcare survey 2024", url: "https://www.coram.org.uk/resource/childcare-survey-2024" },
-    ],
-  },
-  uc_coverage: {
-    description: "Universal Credit covers 85% of eligible childcare costs. This analysis models what happens if the coverage rate is raised to 90%, 95%, or 100%, showing the additional fiscal cost of closing the 15% parental co-pay gap.",
-    baseline: "Current UC childcare coverage rate: 85% (set by the Universal Credit (Childcare Costs) Regulations 2023). DWP reports approximately \u00a31.0bn total spend on the childcare element in 2023\u201324.",
-    comparisons: [
-      "Resolution Foundation recommends increasing to 100% coverage to remove the upfront cost barrier",
-      "IPPR childcare guarantee also proposes 100% coverage",
-      "DWP Stat-Xplore: UC childcare element spend approximately \u00a31.0bn in 2023\u201324",
-    ],
-    sources: [
-      { label: "Resolution Foundation \u2013 Costly childcare (2023)", url: "https://www.resolutionfoundation.org/publications/costly-childcare/" },
-      { label: "IPPR \u2013 A childcare guarantee (2024)", url: "https://www.ippr.org/articles/a-childcare-guarantee" },
-      { label: "UC childcare costs regulations 2023", url: "https://www.legislation.gov.uk/uksi/2023/752/contents/made" },
-    ],
-  },
-  uc_caps: {
-    description: "UC childcare support is subject to monthly caps. This analysis models the effect of raising these caps by 50% and doubling them, to assess how many families are currently constrained by the ceiling.",
-    baseline: "Current caps: \u00a31,014.63 per month for one child, \u00a31,739.37 per month for two or more children (2024\u201325 rates). Last uprated in 2023 alongside the coverage increase to 85%.",
-    comparisons: [
-      "Resolution Foundation: caps have not kept pace with rising childcare costs",
-      "Average childcare cost for under-twos: approximately \u00a3300 per week in London, \u00a3250 per week nationally (Coram 2024)",
-    ],
-    sources: [
-      { label: "Resolution Foundation \u2013 Costly childcare", url: "https://www.resolutionfoundation.org/publications/costly-childcare/" },
-      { label: "DWP benefit and pension rates 2024\u201325", url: "https://www.gov.uk/government/publications/benefit-and-pension-rates-2024-to-2025" },
-    ],
-  },
-  extended_hours: {
-    description: "The extended childcare entitlement provides 30 funded hours per week to working families with children aged 1\u20134. This analysis models full rollout of 30 hours to all ages 1\u20134 and an IPPR-style 40 hours per week wrap-around scenario.",
-    baseline: "Current policy: 30 hours per week, phased rollout. From September 2025, all eligible working families with children aged 9 months to 4 years can access 30 funded hours.",
-    comparisons: [
-      "OBR: 2023 expansion costs \u00a33.3bn in 2025\u201326, rising to \u00a34.1bn by 2027\u201328",
-      "IPPR proposes 40 hours per week wrap-around for ages 0\u201311: \u00a317.8bn gross cost",
-      "IFS: spending could end up \u00a31bn higher than initial forecasts owing to high take-up",
-    ],
-    sources: [
-      { label: "OBR Spring Budget 2023 costings", url: "https://obr.uk/docs/dlm_uploads/Annexes-March-2023.pdf" },
-      { label: "IPPR \u2013 A childcare guarantee", url: "https://www.ippr.org/articles/a-childcare-guarantee" },
-      { label: "Childcare Act 2016", url: "https://www.legislation.gov.uk/ukpga/2016/5/contents" },
-    ],
-  },
-  tfc_rate: {
-    description: "Tax-Free Childcare gives parents a 20% government top-up on childcare spending. This analysis models what happens if the top-up rate is increased to 25%, 33%, or 50%.",
-    baseline: "Current TFC rate: 20% (\u00a32 for every \u00a38 parents pay, up to \u00a32,000 per child per year). HMRC reports TFC cost \u00a30.5bn in 2024\u201325 with 1.1 million families using it.",
-    comparisons: [
-      "HMRC: TFC government top-ups totalled \u00a3632m in 2024\u201325 (826,000 families)",
-      "IFS: only around 40% of eligible families are aware of TFC; actual take-up is lower still",
-    ],
-    sources: [
-      { label: "HMRC TFC statistics (September 2025)", url: "https://www.gov.uk/government/statistics/tax-free-childcare-statistics-september-2025" },
-      { label: "IFS \u2013 The health of the early years sector", url: "https://ifs.org.uk/publications/health-early-years-sector" },
-    ],
-  },
-  tfc_caps: {
-    description: "Tax-Free Childcare is subject to annual caps on government top-ups. This analysis models raising the caps from \u00a32,000/\u00a34,000 to \u00a33,000/\u00a36,000 and \u00a34,000/\u00a38,000 to assess how many families are constrained by the current ceiling.",
-    baseline: "Current caps: \u00a32,000 per child per year (standard), \u00a34,000 per disabled child per year. HMRC reports an average quarterly TFC payment of approximately \u00a3400.",
-    comparisons: [
-      "HMRC: average quarterly payment of approximately \u00a3400 suggests most families do not hit the cap",
-      "Higher-cost areas (e.g. London) are more likely to be cap-constrained",
-    ],
-    sources: [
-      { label: "HMRC TFC statistics (September 2025)", url: "https://www.gov.uk/government/statistics/tax-free-childcare-statistics-september-2025" },
-      { label: "Childcare Payments Act 2014", url: "https://www.legislation.gov.uk/ukpga/2014/28/contents" },
-    ],
-  },
-  income_cap: {
-    description: "Tax-Free Childcare and the extended entitlement are limited to families where each parent earns below \u00a3100,000 adjusted net income. This analysis models raising that cap to \u00a3150,000, \u00a3200,000, or removing it entirely.",
-    baseline: "Current cap: \u00a3100,000 adjusted net income per parent. Applies to both TFC and the extended childcare entitlement (30 hours).",
-    comparisons: [
-      "IFS: higher earners benefit disproportionately from TFC compared with UC families",
-      "Removing the cap would extend eligibility to the highest-income families",
-    ],
-    sources: [
-      { label: "IFS \u2013 The health of the early years sector", url: "https://ifs.org.uk/publications/health-early-years-sector" },
-      { label: "HMRC TFC eligibility", url: "https://www.gov.uk/tax-free-childcare" },
-    ],
-  },
-  funding_rates: {
-    description: "DfE funds childcare providers at hourly rates that vary by child age. This analysis models the cost of increasing these rates by 20%, 50%, or doubling them, addressing concerns about provider underfunding.",
-    baseline: "Current DfE national average funding rates (2024\u201325): under-twos \u00a311.22 per hour, age 2 \u00a38.28 per hour, age 3+ \u00a35.88 per hour.",
-    comparisons: [
-      "Women\u2019s Budget Group: total funding needed \u00a39.4bn versus current \u00a34.2bn (gap of \u00a35.2bn in 2025\u201326)",
-      "Ceeda/DfE provider cost study 2024 highlights systemic underfunding across the sector",
-      "IFS: funding rates largely protected in real terms, but the disadvantage premium received a significant uplift",
-    ],
-    sources: [
-      { label: "Women\u2019s Budget Group \u2013 Childcare funding gap", url: "https://wbg.org.uk/analysis/the-childcare-funding-gap/" },
-      { label: "DfE early years funding rates 2024\u201325", url: "https://www.gov.uk/government/publications/early-years-funding-2024-to-2025" },
-      { label: "IFS education spending 2025\u201326", url: "https://ifs.org.uk/publications/annual-report-education-spending-england-2025-26" },
-    ],
-  },
-  targeted_eligibility: {
-    description: "The targeted (disadvantaged two-year-old) entitlement is means-tested via UC and tax credit income thresholds. This analysis models what happens if the UC income limit is raised from \u00a315,400 to \u00a320,000, \u00a325,000, or \u00a330,000.",
-    baseline: "Current income limits: UC income below \u00a315,400; tax credit income below \u00a316,190. DfE reports approximately 72% of eligible two-year-olds take up funded places.",
-    comparisons: [
-      "DfE: approximately 72% take-up among eligible two-year-olds",
-      "Raising the threshold would extend eligibility to more low-to-middle income families",
-    ],
-    sources: [
-      { label: "DfE \u2013 Education provision: children under 5", url: "https://explore-education-statistics.service.gov.uk/find-statistics/education-provision-children-under-5" },
-      { label: "DfE \u2013 Free early education for two-year-olds", url: "https://www.gov.uk/help-with-childcare-costs/free-childcare-2-year-olds" },
-    ],
-  },
-  extend_weeks: {
-    description: "Funded childcare entitlements currently run for 38 weeks per year (term-time only). This analysis models extending provision to 44, 48 (IPPR proposal), and 52 weeks (full year) to address the holiday childcare gap.",
-    baseline: "Current: 38 weeks per year (term-time only). Parents must self-fund the remaining 14 weeks of holiday childcare.",
-    comparisons: [
-      "Resolution Foundation: 25 hours per week for 47 weeks for three- and four-year-olds costs approximately \u00a32.1bn",
-      "IPPR proposes 48 weeks per year as part of their universal guarantee",
-      "Holiday childcare costs average \u00a3150 per week per child (Coram 2024)",
-    ],
-    sources: [
-      { label: "Resolution Foundation \u2013 An equal start", url: "https://www.resolutionfoundation.org/publications/an-equal-start/" },
-      { label: "IPPR \u2013 A childcare guarantee", url: "https://www.ippr.org/articles/a-childcare-guarantee" },
-    ],
-  },
-  min_work_hours: {
-    description: "Tax-Free Childcare and the extended entitlement require each parent to work at least 16 hours per week. This analysis models lowering that threshold to 12, 8, or 1 hour to extend eligibility to part-time workers.",
-    baseline: "Current: 16 hours per week minimum (equivalent to 16 hours at the national minimum or living wage). Applies to both TFC and the extended childcare entitlement.",
-    comparisons: [
-      "Resolution Foundation: a part-time cleaner working 10 hours per week loses \u00a37 per week compared with not working at all, owing to lost childcare support",
-      "TUC: childcare costs are a major barrier to part-time workers entering or remaining in employment",
-    ],
-    sources: [
-      { label: "Resolution Foundation \u2013 Costly childcare", url: "https://www.resolutionfoundation.org/publications/costly-childcare/" },
-      { label: "TUC \u2013 Childcare and working families", url: "https://www.tuc.org.uk/research-analysis/reports/childcare-and-working-families" },
-    ],
-  },
-  fiscal: {
-    description: "This section estimates the net fiscal cost of four composite reform bundles by comparing reformed household net income against the baseline. Each bundle combines multiple parameter changes into a single coherent reform package.",
-    baseline: "Net cost equals the total increase in household net income under each reform minus the baseline. A positive value means the reform costs the government more.",
-    comparisons: [
-      "IFS: 2023 expansion revised cost approximately \u00a31bn higher than initially forecast",
-      "IPPR universal guarantee: \u00a37.7bn net fiscal cost (offset by \u00a38bn in parental employment gains)",
-      "Himmelweit and Sevilla (Women\u2019s Budget Group): \u00a37.3\u201317.9bn net depending on the scope of universal childcare",
-      "Resolution Foundation: 25 hours per week for 47 weeks for three- and four-year-olds costs approximately \u00a32.1bn net",
-    ],
-    sources: [
-      { label: "IFS education spending 2025\u201326", url: "https://ifs.org.uk/publications/annual-report-education-spending-england-2025-26" },
-      { label: "IPPR \u2013 A childcare guarantee", url: "https://www.ippr.org/articles/a-childcare-guarantee" },
-      { label: "Women\u2019s Budget Group \u2013 Childcare as infrastructure", url: "https://wbg.org.uk/analysis/a-new-approach-to-childcare/" },
-      { label: "Resolution Foundation \u2013 An equal start", url: "https://www.resolutionfoundation.org/publications/an-equal-start/" },
-    ],
-  },
-};
-
-function fmtBn(v) {
+function fmt(v) {
+  if (v == null) return "\u2014";
   const abs = Math.abs(v);
   if (abs >= 1e9) return `\u00A3${(v / 1e9).toFixed(2)}bn`;
   if (abs >= 1e6) return `\u00A3${(v / 1e6).toFixed(0)}m`;
   return `\u00A3${v.toLocaleString("en-GB", { maximumFractionDigits: 0 })}`;
 }
 
-function labelOf(key, map) {
-  return map[key] || key;
+function pct(pe, ext) {
+  if (!pe || !ext) return null;
+  return ((pe - ext) / ext * 100).toFixed(0);
 }
 
-function CustomTooltip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
-  return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 8,
-        padding: "0.5rem 0.75rem",
-        fontSize: "0.8rem",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-      }}
-    >
-      <div style={{ color: "#000", fontWeight: 600 }}>{d.name}</div>
-      {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || "#000" }}>
-          {p.name}: {fmtBn(p.value)}
-        </div>
-      ))}
-    </div>
-  );
+function getMatch(pe, ext) {
+  if (pe == null || ext == null) return "none";
+  const r = Math.abs(pe / ext - 1);
+  if (r <= 0.20) return "close";
+  if (r <= 0.75) return "moderate";
+  return "divergent";
 }
 
-function BenchmarkBox({ analysisKey }) {
-  const b = BENCHMARKS[analysisKey];
-  if (!b) return null;
-  return (
-    <div className="benchmark-box">
-      <p style={{ marginBottom: "0.5rem" }}>{b.description}</p>
-      <strong>Reform baseline:</strong> {b.baseline}
-      <div style={{ marginTop: "0.5rem" }}>
-        <strong>Comparable estimates:</strong>
-        <ul>
-          {b.comparisons.map((item, i) => (
-            <li key={i}>{item}</li>
-          ))}
-        </ul>
-      </div>
-      <div style={{ marginTop: "0.5rem", fontSize: "0.78rem" }}>
-        Sources:{" "}
-        {b.sources.map((s, i) => (
-          <span key={i}>
-            {i > 0 && " | "}
-            <a href={s.url} target="_blank" rel="noreferrer">
-              {s.label}
-            </a>
-          </span>
-        ))}
-      </div>
-    </div>
+const MATCH_LABELS = {
+  close: "Close match",
+  moderate: "Moderate gap",
+  divergent: "Large gap",
+  none: "PE only",
+};
+
+/* ── Comparison definitions ──────────────────────────────── */
+/* All external values are hardcoded. PE values are looked up */
+/* from the CSV using analysis + scenario + metric.           */
+
+const COMPARISONS = [
+  // ── EXTENDED ENTITLEMENT (total spending) ──
+  {
+    category: "Extended Entitlement",
+    reform: "Total extended childcare entitlement spending (30 funded hours, working families, children 9m\u20134yrs)",
+    context: "Baseline total cost of the fully rolled-out extended entitlement (30 funded hours, ages 9m\u20134, working families). PE models at 81% calibrated take-up for 2026.",
+    pe: { analysis: "extended_hours", scenario: "Baseline (current phased)", metric: "extended_childcare_entitlement" },
+    extValue: 4.06e9,
+    extLabel: "DfE / OBR projected programme cost (2026\u201327)",
+    sourceUrl: "https://assets.publishing.service.gov.uk/media/66221ba8252f0d71cf757d2b/Spring_budget_2023_childcare_expansion_costing_note_information.pdf",
+    comparability: "similar",
+    whyDiffer: "PE models 2026 total extended entitlement spending at calibrated 81% take-up. OBR/DfE projected \u00a34.06bn for 2026\u201327 (\u00a34.1bn for 2027\u201328). Close alignment validates PE\u2019s modelling of the 2023 expansion.",
+  },
+
+  // ── PROVIDER FUNDING RATES ──
+  {
+    category: "Provider Funding Rates",
+    reform: "Increase DfE provider funding rates by 50% across all age bands",
+    context: "Raise DfE hourly provider rates by 50% across all age bands (e.g. under-2s from \u00a311.54 to \u00a317.31/hr). Applies to universal, targeted, and extended entitlement hours.",
+    pe: { analysis: "funding_rates", scenario: "+50% rates", metric: "Combined" },
+    extValue: 9.4e9,
+    extLabel: "Women\u2019s Budget Group \u2014 total providers need",
+    sourceUrl: "https://www.wbg.org.uk/publication/wbg-finds-government-funding-for-early-education-and-childcare-falls-short-by-5-2bn/",
+    comparability: "similar",
+    whyDiffer: "WBG estimates providers need \u00a39.4bn total (current \u00a34.2bn + \u00a35.2bn gap). PE\u2019s +50% rates yields a combined total very close to this target. A ~40% rate increase would match WBG\u2019s recommendation exactly.",
+  },
+
+  // ── REFORM BUNDLES ──
+  {
+    category: "Reform Bundles",
+    reform: "Double all DfE provider funding rates (net fiscal cost)",
+    context: "Double all DfE hourly provider rates (e.g. under-2s from \u00a311.54 to \u00a323.08/hr). Net fiscal cost = total increase in household net income versus baseline.",
+    pe: { analysis: "fiscal", scenario: "Double funding rates", metric: "net_cost" },
+    extValue: 5.2e9,
+    extLabel: "Women\u2019s Budget Group \u2014 funding gap",
+    sourceUrl: "https://www.wbg.org.uk/publication/wbg-finds-government-funding-for-early-education-and-childcare-falls-short-by-5-2bn/",
+    comparability: "similar",
+    whyDiffer: "WBG estimates a \u00a35.2bn funding gap (providers need \u00a39.4bn vs current \u00a34.2bn). PE costs a more extreme reform (doubling all rates), which naturally exceeds WBG\u2019s gap estimate. PE\u2019s +50% scenario delta is a closer comparator.",
+  },
+  {
+    category: "Reform Bundles",
+    reform: "30hrs for all 1\u20134yr-olds + 48 weeks per year (net fiscal cost)",
+    context: "Bundle: extend funded weeks from 38 (term-time) to 48 per year, and ensure 30hrs available for all 1\u20134yr-olds. Baseline: 30hrs for 38 weeks/year.",
+    pe: { analysis: "fiscal", scenario: "30hrs all 1-4yrs + 48 weeks", metric: "net_cost" },
+    extValue: 2.1e9,
+    extLabel: "Resolution Foundation \u2014 The Costs of Childcare (25hrs/47wks, 3\u20134yr-olds)",
+    sourceUrl: "https://www.resolutionfoundation.org/publications/costs-childcare-housing-costs/",
+    comparability: "similar",
+    whyDiffer: "Res Foundation costs 25hrs/47wks for 3\u20134yr-olds only (2012 estimate). PE costs 30hrs/48wks for all entitled ages (broader scope). Despite broader scope, PE estimate is lower \u2014 possibly because Res Foundation includes wrap-around or holiday provision costs PE doesn\u2019t capture.",
+  },
+  {
+    category: "Reform Bundles",
+    reform: "UC 100% coverage + double caps (net fiscal cost)",
+    context: "Bundle: raise UC coverage from 85% to 100% (no co-pay) and double monthly caps from \u00a31,015/\u00a31,739 to \u00a32,030/\u00a33,479. Baseline: 85% coverage with current caps.",
+    pe: { analysis: "fiscal", scenario: "UC 100% coverage + double caps", metric: "net_cost" },
+    extValue: 150e6,
+    extLabel: "CPAG \u2014 UC: A Three-Step Plan (coverage only, current claimants)",
+    sourceUrl: "https://cpag.org.uk/news/universal-credit-three-step-plan",
+    comparability: "similar",
+    whyDiffer: "CPAG costs only the coverage increase (85%\u2192100%) for ~160k current claimants. PE bundles coverage AND cap doubling across the full eligible population. The gap reflects the UC childcare take-up problem (13% actual vs 100% eligible).",
+  },
+
+  // ── BASELINE SPENDING ──
+  {
+    category: "Baseline Spending",
+    reform: "Tax-Free Childcare spending (PE 2026 vs HMRC 2024\u201325 actuals)",
+    context: "Baseline TFC spending at current policy: 20% government top-up, \u00a32k/\u00a34k annual caps. PE calibrates to 58% take-up for 2026.",
+    pe: { analysis: "baseline", scenario: "baseline", metric: "tax_free_childcare" },
+    extValue: 632e6,
+    extLabel: "HMRC TFC Statistics Sep 2025 (826k families)",
+    sourceUrl: "https://www.gov.uk/government/news/826000-families-boost-finances-with-childcare-savings",
+    comparability: "like-for-like",
+    whyDiffer: "PE calibrates TFC to 58% take-up for 2026. HMRC reports 2024\u201325 actuals for 826k families. Moderate gap likely due to PE\u2019s 2026 forecast year vs HMRC\u2019s 2024\u201325 actuals and calibration differences.",
+  },
+  {
+    category: "Baseline Spending",
+    reform: "Universal childcare entitlement (15hrs, all 3\u20134yr-olds)",
+    context: "Baseline spending on universal 15hrs/week for all 3\u20134yr-olds (38 weeks/year). PE calibrates to 56% take-up for 2026.",
+    pe: { analysis: "baseline", scenario: "baseline", metric: "universal_childcare_entitlement" },
+    extValue: 2.6e9,
+    extLabel: "DfE Early Years Funding Formulae 2024\u201325",
+    sourceUrl: "https://www.gov.uk/government/publications/early-years-funding-2024-to-2025/2024-to-2025-early-years-national-funding-formulae-technical-note",
+    comparability: "similar",
+    whyDiffer: "PE calibrated to 56% take-up. DfE figure covers all funded 3\u20134yr places including some non-universal provision. PE\u2019s lower estimate reflects modelling only the universal 15hr entitlement.",
+  },
+  {
+    category: "Baseline Spending",
+    reform: "Total government childcare spending (PE 2026 vs IFS 2025\u201326)",
+    context: "Baseline total across all seven childcare programmes (TFC, UC, WTC, universal, targeted, extended entitlement, Care to Learn) at current policy settings for 2026.",
+    pe: { analysis: "baseline", scenario: "baseline", metric: "total" },
+    extValue: 10.5e9,
+    extLabel: "IFS Annual Report on Education Spending 2025\u201326",
+    sourceUrl: "https://ifs.org.uk/publications/annual-report-education-spending-england-2025-26",
+    comparability: "similar",
+    whyDiffer: "PE models full eligible population including UC childcare element at full eligibility (~\u00a38bn). DWP reports only ~160k actual UC CC claimants (13% take-up, \u00a3850m). Excluding UC CC, PE total (~\u00a37.8bn) closely aligns with IFS (\u00a38.7bn entitlements only).",
+  },
+  {
+    category: "Baseline Spending",
+    reform: "UC childcare element spending (PE 2026 vs DWP annualised actuals)",
+    context: "Baseline UC childcare element spending at current policy: 85% coverage rate, \u00a31,015/\u00a31,739 monthly caps. PE models the full eligible population (vs ~13% actual take-up).",
+    pe: { analysis: "baseline", scenario: "baseline", metric: "uc_childcare_element" },
+    extValue: 958e6,
+    extLabel: "DWP UC Statistics May 2025 (~190k households, \u00a3420/mo avg, annualised)",
+    sourceUrl: "https://www.gov.uk/government/statistics/universal-credit-statistics-29-april-2013-to-9-october-2025",
+    comparability: "similar",
+    whyDiffer: "Largest single divergence. PE models the full FRS eligible population at 100% eligibility. DWP reports only ~190k households actually claiming (~16% of eligible). The gap is well-documented: UC childcare requires upfront payment before reimbursement, depressing take-up.",
+  },
+
+  // ── UC CHILDCARE CAPS ──
+  {
+    category: "UC Childcare Caps",
+    reform: "Double UC childcare monthly caps (\u00a31,015\u2192\u00a32,030 / \u00a31,739\u2192\u00a33,479)",
+    context: "Double UC monthly childcare caps from \u00a31,015/\u00a31,739 to \u00a32,030/\u00a33,479. Only ~3% of current claimants hit the cap.",
+    pe: { analysis: "uc_caps", scenario: "Double caps", metric: "delta" },
+    extValue: 80e6,
+    extLabel: "HM Treasury \u2014 Spring Budget 2023 costings (\u00a360\u2013100m/yr)",
+    sourceUrl: "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1142824/Costing_Document_-_Spring_Budget_2023.pdf",
+    extNote: "HMT costed a smaller uprating (\u00a3646\u2192\u00a3951), not full doubling",
+    comparability: "similar",
+    whyDiffer: "HMT\u2019s \u00a360\u2013100m/yr was for the 2023 specific uprating (smaller than doubling) and costed only current claimants. PE models full doubling across full eligible population. Only 3% of UC CC claimants hit the cap.",
+  },
+
+  // ── FUNDED WEEKS ──
+  {
+    category: "Funded Weeks per Year",
+    reform: "Extend funded childcare from 38 to 48 weeks per year (IPPR-style)",
+    context: "Extend funded childcare from 38 weeks/year (term-time) to 48 weeks, covering most school holidays. Hours unchanged (30hrs extended, 15hrs universal/targeted).",
+    pe: { analysis: "extend_weeks", scenario: "48 weeks (IPPR)", metric: "delta" },
+    extValue: 2.1e9,
+    extLabel: "Resolution Foundation \u2014 The Costs of Childcare (25hrs/47wks, 3\u20134yr-olds only)",
+    sourceUrl: "https://www.resolutionfoundation.org/publications/costs-childcare-housing-costs/",
+    comparability: "similar",
+    whyDiffer: "PE runs 48 weeks at 30hrs for all entitled ages (9m\u20134). Res Foundation modelled 25hrs/47wks for 3\u20134yr-olds only (2012 estimate). Despite PE\u2019s broader scope, PE costs less \u2014 Res Foundation may include additional wrap-around provision.",
+  },
+
+  // ── UC CHILDCARE COVERAGE ──
+  {
+    category: "UC Childcare Coverage",
+    reform: "Raise UC childcare coverage rate from 85% to 100%",
+    context: "Raise UC childcare reimbursement from 85% to 100% of costs, eliminating the 15% parental co-pay.",
+    pe: { analysis: "uc_coverage", scenario: "100% coverage", metric: "delta" },
+    extValue: 150e6,
+    extLabel: "CPAG \u2014 UC: A Three-Step Plan (2024)",
+    sourceUrl: "https://cpag.org.uk/news/universal-credit-three-step-plan",
+    comparability: "similar",
+    whyDiffer: "CPAG\u2019s \u00a3150m covers only the ~160k households currently claiming UC childcare (13% of eligible). PE models the full FRS eligible population. The gap directly reflects the known UC childcare take-up problem, not a modelling error.",
+  },
+
+  // ── INCOME CAP ──
+  {
+    category: "Income Cap",
+    reform: "Raise \u00a3100k income cap for TFC + extended entitlement to \u00a3150k",
+    context: "Raise the \u00a3100k per-parent income cap for TFC and extended entitlement to \u00a3150k, removing the cliff-edge where families lose all support at \u00a3100,001.",
+    pe: { analysis: "income_cap", scenario: "\u00a3150k cap", metric: "delta" },
+    extValue: 1.4e9,
+    extLabel: "Government estimate (via AJ Bell) for \u00a3120k\u2013\u00a3160k range",
+    sourceUrl: "https://www.ajbell.co.uk/news/beat-ps100000-tax-trap-cost-could-cost-parents-tens-thousands",
+    comparability: "similar",
+    whyDiffer: "Govt\u2019s \u00a31.4bn estimate covers a \u00a3120k\u2013\u00a3160k per-parent range. PE\u2019s \u00a3150k scenario is within that range but costs much less. Possible reasons: (1) Govt uses per-parent vs PE\u2019s household threshold, (2) Govt may include behavioural responses, (3) relatively few families earn \u00a3100k\u2013\u00a3150k AND have young children.",
+  },
+
+  // ── WORK REQUIREMENTS ──
+  {
+    category: "Work Requirements",
+    reform: "Remove 16hr/week work requirement entirely (reduce to 1hr minimum)",
+    context: "Remove the 16hrs/week minimum work requirement for TFC and extended entitlement (reduce to 1hr). Opens eligibility to non-working and part-time families.",
+    pe: { analysis: "min_work_hours", scenario: "No minimum (1 hr)", metric: "delta" },
+    extValue: 250e6,
+    extLabel: "Sutton Trust / IFS \u2014 A Fair Start (remove work req for 3\u20134yr-olds only)",
+    sourceUrl: "https://www.suttontrust.com/our-research/a-fair-start-equalising-access-to-early-education/",
+    comparability: "similar",
+    whyDiffer: "PE removes work requirement for ALL ECE ages (9m\u20134) plus TFC. Sutton Trust costs this only for 3\u20134yr-olds\u2019 extended entitlement. PE\u2019s broader scope (younger children cost more per funded hour, plus TFC) explains the gap.",
+  },
+
+  // ── TARGETED ELIGIBILITY ──
+  {
+    category: "Targeted Eligibility",
+    reform: "Raise UC income threshold for targeted 2yr-old entitlement to \u00a330k (vs extending 30hrs to disadvantaged 2yr-olds)",
+    context: "Raise the UC income threshold for 2yr-old targeted entitlement from \u00a315,400 to \u00a330k. Compared against Sutton Trust\u2019s different reform: extending 30hrs to disadvantaged 2yr-olds.",
+    pe: { analysis: "targeted_eligibility", scenario: "UC limit \u00a330k", metric: "delta" },
+    extValue: 165e6,
+    extLabel: "Sutton Trust / IFS \u2014 30hrs for disadvantaged 3\u20134yr-olds",
+    sourceUrl: "https://www.suttontrust.com/our-research/a-fair-start-equalising-access-to-early-education/",
+    comparability: "different",
+    whyDiffer: "Different reforms entirely. PE raises the UC income threshold to \u00a330k for the 15hr targeted entitlement (narrow). Sutton Trust costs giving 30hrs extended entitlement to disadvantaged 3\u20134yr-olds (much broader). Divergence is expected because these are fundamentally different policy levers.",
+  },
+];
+
+const CATEGORY_ORDER = [
+  "Extended Entitlement",
+  "Provider Funding Rates",
+  "Reform Bundles",
+  "Baseline Spending",
+  "UC Childcare Caps",
+  "Funded Weeks per Year",
+  "UC Childcare Coverage",
+  "Income Cap",
+  "Work Requirements",
+  "Targeted Eligibility",
+];
+
+const COMPARABILITY_LABELS = {
+  "like-for-like": "Like-for-like",
+  "similar": "Similar scope",
+  "different": "Different reforms",
+  "pe-only": "PE only",
+};
+
+/* ── CSV lookup ──────────────────────────────────────────── */
+
+function lookup(data, spec) {
+  if (!spec) return null;
+  const row = data.find(
+    (r) => r.analysis === spec.analysis && r.scenario === spec.scenario && r.metric === spec.metric,
   );
+  return row ? row.value : null;
 }
 
-// ── Sections ────────────────────────────────────────────────────
-
-function BaselineSection({ rows }) {
-  const items = rows
-    .filter((r) => r.metric !== "total")
-    .map((r) => ({
-      name: labelOf(r.metric, METRIC_LABELS),
-      value: r.value,
-    }))
-    .sort((a, b) => b.value - a.value);
-
-  const total = rows.find((r) => r.metric === "total");
-
-  return (
-    <div className="card">
-      <h2>Baseline childcare spending</h2>
-      <BenchmarkBox analysisKey="baseline" />
-      {total && (
-        <div className="summary-grid">
-          <div className="stat-card">
-            <div className="label">Total annual spending</div>
-            <div className="value">{fmtBn(total.value)}</div>
-          </div>
-          <div className="stat-card">
-            <div className="label">Year</div>
-            <div className="value">{total.year}</div>
-          </div>
-          <div className="stat-card">
-            <div className="label">Programmes</div>
-            <div className="value">{items.length}</div>
-          </div>
-        </div>
-      )}
-      <div className="chart-container">
-        <ResponsiveContainer>
-          <BarChart data={items} layout="vertical" margin={{ left: 160 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              type="number"
-              tickFormatter={fmtBn}
-              stroke="#000"
-              fontSize={12}
-              tick={{ fill: "#000" }}
-            />
-            <YAxis
-              type="category"
-              dataKey="name"
-              stroke="#000"
-              fontSize={12}
-              width={150}
-              tick={{ fill: "#000" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-              {items.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-function ScenarioSection({ analysisKey, rows }) {
-  const nonDelta = rows.filter((r) => r.metric !== "delta");
-
-  const metrics = [...new Set(nonDelta.map((r) => r.metric))];
-  const scenarios = [...new Set(nonDelta.map((r) => r.scenario))];
-
-  const chartData = scenarios.map((sc) => {
-    const entry = { name: sc };
-    metrics.forEach((m) => {
-      const found = nonDelta.find(
-        (r) => r.scenario === sc && r.metric === m
-      );
-      if (found) entry[m] = found.value;
-    });
-    return entry;
-  });
-
-  return (
-    <div className="card">
-      <h2>{labelOf(analysisKey, ANALYSIS_LABELS)}</h2>
-      <BenchmarkBox analysisKey={analysisKey} />
-      <div className="chart-container tall">
-        <ResponsiveContainer>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              dataKey="name"
-              stroke="#000"
-              fontSize={11}
-              tick={{ fill: "#000" }}
-              interval={0}
-            />
-            <YAxis
-              tickFormatter={fmtBn}
-              stroke="#000"
-              fontSize={12}
-              tick={{ fill: "#000" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            {metrics.length > 1 && <Legend />}
-            {metrics.map((m, i) => (
-              <Bar
-                key={m}
-                dataKey={m}
-                name={labelOf(m, METRIC_LABELS)}
-                fill={COLORS[i % COLORS.length]}
-                radius={[4, 4, 0, 0]}
-              />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-function TakeupSection({ rows }) {
-  const schemes = [...new Set(rows.map((r) => r.scenario))];
-
-  return (
-    <div className="card">
-      <h2>Take-up sensitivity</h2>
-      <BenchmarkBox analysisKey="takeup" />
-      {schemes.map((scheme) => {
-        const schemeRows = rows.filter((r) => r.scenario === scheme);
-        const calibrated = schemeRows.find((r) =>
-          r.metric.startsWith("calibrated_")
-        );
-        const sensitivity = schemeRows
-          .filter((r) => r.metric.startsWith("takeup_"))
-          .map((r) => ({
-            name: `${(parseFloat(r.metric.split("_")[1]) * 100).toFixed(0)}%`,
-            value: r.value,
-          }));
-
-        return (
-          <div key={scheme}>
-            <h3>
-              {scheme}
-              {calibrated && (
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#000",
-                    fontWeight: 400,
-                    marginLeft: "0.75rem",
-                  }}
-                >
-                  Calibrated: {fmtBn(calibrated.value)}
-                </span>
-              )}
-            </h3>
-            <div className="chart-container" style={{ height: 200 }}>
-              <ResponsiveContainer>
-                <BarChart data={sensitivity}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="name" stroke="#000" fontSize={12} tick={{ fill: "#000" }} />
-                  <YAxis
-                    tickFormatter={fmtBn}
-                    stroke="#000"
-                    fontSize={12}
-                    tick={{ fill: "#000" }}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    fill="#2d6a4f"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function FiscalSection({ rows }) {
-  const data = rows.map((r) => ({
-    name: r.scenario,
-    value: r.value,
-  }));
-
-  return (
-    <div className="card">
-      <h2>Net fiscal impact</h2>
-      <BenchmarkBox analysisKey="fiscal" />
-      <div className="summary-grid">
-        {data.map((d, i) => (
-          <div className="stat-card" key={i}>
-            <div className="label">{d.name}</div>
-            <div className={`value ${d.value >= 0 ? "positive" : "negative"}`}>
-              {fmtBn(d.value)}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="chart-container">
-        <ResponsiveContainer>
-          <BarChart data={data} layout="vertical" margin={{ left: 220 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              type="number"
-              tickFormatter={fmtBn}
-              stroke="#000"
-              fontSize={12}
-              tick={{ fill: "#000" }}
-            />
-            <YAxis
-              type="category"
-              dataKey="name"
-              stroke="#000"
-              fontSize={11}
-              width={210}
-              tick={{ fill: "#000" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-              {data.map((d, i) => (
-                <Cell
-                  key={i}
-                  fill={d.value >= 0 ? "#16a34a" : "#dc2626"}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-function DistributionalSection({ rows }) {
-  const gains = rows
-    .filter(
-      (r) => r.metric === "total_gain" && r.scenario !== "all"
-    )
-    .map((r) => {
-      const decile = r.scenario.replace("decile_", "");
-      const avg = rows.find(
-        (x) =>
-          x.scenario === r.scenario && x.metric === "avg_gain_per_hh"
-      );
-      return {
-        name: `D${decile}`,
-        total_gain: r.value,
-        avg_gain: avg ? avg.value : 0,
-      };
-    });
-
-  const totalRow = rows.find(
-    (r) => r.scenario === "all" && r.metric === "total_gain"
-  );
-
-  return (
-    <div className="card">
-      <h2>Distributional analysis</h2>
-      {totalRow && (
-        <div className="summary-grid">
-          <div className="stat-card">
-            <div className="label">Total gain (all deciles)</div>
-            <div className="value positive">{fmtBn(totalRow.value)}</div>
-          </div>
-        </div>
-      )}
-      <h3>Total gain by income decile</h3>
-      <div className="chart-container">
-        <ResponsiveContainer>
-          <BarChart data={gains}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="name" stroke="#000" fontSize={12} tick={{ fill: "#000" }} />
-            <YAxis
-              tickFormatter={fmtBn}
-              stroke="#000"
-              fontSize={12}
-              tick={{ fill: "#000" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="total_gain"
-              name="Total gain"
-              radius={[4, 4, 0, 0]}
-            >
-              {gains.map((_, i) => (
-                <Cell key={i} fill={COLORS[i % COLORS.length]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      <h3>Average gain per household</h3>
-      <div className="chart-container">
-        <ResponsiveContainer>
-          <BarChart data={gains}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="name" stroke="#000" fontSize={12} tick={{ fill: "#000" }} />
-            <YAxis
-              tickFormatter={(v) =>
-                `\u00A3${v.toLocaleString("en-GB", {
-                  maximumFractionDigits: 0,
-                })}`
-              }
-              stroke="#000"
-              fontSize={12}
-              tick={{ fill: "#000" }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar
-              dataKey="avg_gain"
-              name="Average gain per household"
-              fill="#40916c"
-              radius={[4, 4, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
-
-// ── Main app ────────────────────────────────────────────────────
+/* ── App ─────────────────────────────────────────────────── */
 
 export default function App() {
   const [data, setData] = useState([]);
-  const [tab, setTab] = useState("overview");
-
-  const loadCSV = useCallback((text) => {
-    const { data: parsed } = Papa.parse(text, {
-      header: true,
-      skipEmptyLines: true,
-    });
-    const rows = parsed.map((r) => ({
-      ...r,
-      value: parseFloat(r.value),
-      year: parseInt(r.year, 10),
-    }));
-    setData(rows);
-  }, []);
 
   useEffect(() => {
     fetch("/results.csv")
-      .then((res) => {
-        if (res.ok) return res.text();
-        throw new Error("No CSV found");
+      .then((res) => (res.ok ? res.text() : Promise.reject()))
+      .then((text) => {
+        const { data: parsed } = Papa.parse(text, { header: true, skipEmptyLines: true });
+        setData(parsed.map((r) => ({ ...r, value: parseFloat(r.value) })));
       })
-      .then(loadCSV)
       .catch(() => {});
-  }, [loadCSV]);
+  }, []);
 
-  const analyses = [...new Set(data.map((r) => r.analysis))];
-  const byAnalysis = (key) => data.filter((r) => r.analysis === key);
-
-  const TABS = [
-    { key: "overview", label: "Overview" },
-    ...analyses
-      .filter((a) => a !== "baseline" && a !== "distributional" && a !== "fiscal")
-      .map((a) => ({
-        key: a,
-        label: ANALYSIS_LABELS[a] || a,
-      })),
-  ];
-
-  if (data.length === 0) {
+  if (!data.length) {
     return (
-      <>
-        <div className="banner">
-          <h1>UK childcare reforms benchmark</h1>
+      <div className="loading">
+        <div className="loading-inner">
+          <h1>UK Childcare Reforms Audit</h1>
+          <p>Loading results\u2026</p>
+          <p className="loading-hint">
+            Run <code>python run.py all</code> and copy results to{" "}
+            <code>dashboard/public/results.csv</code>
+          </p>
         </div>
-        <p className="intro">Loading results\u2026</p>
-      </>
+      </div>
     );
   }
 
-  const year = data[0]?.year;
+  // Resolve values — PE from CSV, externals hardcoded
+  const resolved = COMPARISONS.map((c) => {
+    const peVal = lookup(data, c.pe);
+    const extVal = c.extValue ?? null;
+    const isPeOnly = c.comparability === "pe-only";
+    const match = isPeOnly ? "none" : getMatch(peVal, extVal);
+    const diff = pct(peVal, extVal);
+    return { ...c, peVal, extVal, match, diff, isPeOnly };
+  });
 
-  function renderTab() {
-    if (tab === "overview") {
-      return (
-        <>
-          {analyses.includes("baseline") && (
-            <BaselineSection rows={byAnalysis("baseline")} />
-          )}
-          {analyses.includes("fiscal") && (
-            <FiscalSection rows={byAnalysis("fiscal")} />
-          )}
-          {analyses.includes("distributional") && (
-            <DistributionalSection rows={byAnalysis("distributional")} />
-          )}
-        </>
-      );
-    }
+  // Group by category
+  const grouped = CATEGORY_ORDER.map((cat) => ({
+    category: cat,
+    items: resolved.filter((c) => c.category === cat),
+  })).filter((g) => g.items.length > 0);
 
-    const rows = byAnalysis(tab);
-    if (rows.length === 0) {
-      return <div className="empty">No data for this analysis.</div>;
-    }
-
-    if (tab === "takeup") return <TakeupSection rows={rows} />;
-    if (tab === "fiscal") return <FiscalSection rows={rows} />;
-    return <ScenarioSection analysisKey={tab} rows={rows} />;
-  }
+  // Counts
+  const counts = { close: 0, moderate: 0, divergent: 0, none: 0 };
+  resolved.forEach((c) => counts[c.match]++);
+  const total = resolved.length;
 
   return (
     <>
-      <div className="banner">
-        <h1>UK childcare reforms benchmark</h1>
+      <header className="header">
+        <h1>UK Childcare Reforms Audit</h1>
+        <p className="header-sub">PolicyEngine vs External Estimates</p>
+      </header>
+
+      <div className="intro">
+        Comparing{" "}
+        <a href="https://policyengine.org/uk" target="_blank" rel="noreferrer">PolicyEngine UK</a>{" "}
+        microsimulation estimates against published costings from OBR, IFS, HMRC, DfE, HM Treasury,
+        CPAG, Sutton Trust, Women&apos;s Budget Group, and Resolution Foundation. Each comparison
+        shows what PolicyEngine estimates, what the external source says, and why they differ.{" "}
+        <a href="https://policyengine.org/uk/research/uk-childcare-report" target="_blank" rel="noreferrer">
+          Full methodology &rarr;
+        </a>
       </div>
 
-      <p className="intro">
-        This tool uses the{" "}
-        <a href="https://www.policyengine.org/uk" target="_blank" rel="noreferrer">
-          PolicyEngine UK
-        </a>{" "}
-        microsimulation model to stress-test childcare subsidy reforms for the {year} tax year.
-        Each section models a specific policy lever, compares the results against official government
-        estimates and external benchmarks from the IFS, IPPR, Resolution Foundation, and the
-        Women&apos;s Budget Group, and reports the fiscal cost of each reform. See the{" "}
-        <a href="https://www.policyengine.org/uk/research/uk-childcare-report" target="_blank" rel="noreferrer">
-          full report
-        </a>{" "}
-        for methodology.
-      </p>
+      <div className="summary-bar">
+        <div className="summary-item">
+          <span className="summary-num">{total}</span>
+          <span className="summary-label">Comparisons</span>
+        </div>
+        <div className="summary-item">
+          <span className="pill pill-close">{counts.close}</span>
+          <span className="summary-label">Close (&le;20%)</span>
+        </div>
+        <div className="summary-item">
+          <span className="pill pill-moderate">{counts.moderate}</span>
+          <span className="summary-label">Moderate</span>
+        </div>
+        <div className="summary-item">
+          <span className="pill pill-divergent">{counts.divergent}</span>
+          <span className="summary-label">Large gap</span>
+        </div>
+      </div>
 
-      <div className="tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            className={tab === t.key ? "active" : ""}
-            onClick={() => setTab(t.key)}
-          >
-            {t.label}
-          </button>
+      <main className="main">
+        {grouped.map((group) => (
+          <section key={group.category} className="cat-section">
+            <h2 className="cat-title">{group.category}</h2>
+
+            {group.items.map((c, i) => (
+              <div key={i} className={`comp-card border-${c.match}`}>
+                {/* Card header */}
+                <div className="comp-header">
+                  <div className="comp-reform">{c.reform}</div>
+                  <div className="comp-badges">
+                    <span className={`comp-badge badge-${c.comparability === "pe-only" ? "none" : c.comparability}`}>
+                      {COMPARABILITY_LABELS[c.comparability]}
+                    </span>
+                    <span className={`comp-badge badge-${c.match}`}>
+                      {MATCH_LABELS[c.match]}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Policy context */}
+                {c.context && (
+                  <div className="comp-context">{c.context}</div>
+                )}
+
+                {/* Estimates */}
+                <div className="comp-estimates">
+                  <div className="est est-pe">
+                    <div className="est-who">PolicyEngine</div>
+                    <div className="est-val">{fmt(c.peVal)}</div>
+                  </div>
+
+                  {!c.isPeOnly && (
+                    <>
+                      <div className="est-vs">vs</div>
+                      <div className="est est-ext">
+                        <div className="est-who">
+                          {c.extLabel}
+                          {c.extNote && <span className="est-note"> &mdash; {c.extNote}</span>}
+                        </div>
+                        <div className="est-val">{fmt(c.extVal)}</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Difference indicator */}
+                {!c.isPeOnly && c.diff != null && (
+                  <div className={`comp-diff diff-${c.match}`}>
+                    {c.diff > 0 ? "+" : ""}{c.diff}% difference
+                    {c.peVal && c.extVal && (
+                      <span className="diff-ratio">
+                        {" "}({(c.peVal / c.extVal).toFixed(2)}x)
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Source */}
+                {c.sourceUrl && (
+                  <div className="comp-source">
+                    <a href={c.sourceUrl} target="_blank" rel="noreferrer">
+                      Source &rarr;
+                    </a>
+                  </div>
+                )}
+
+                {/* Why they differ */}
+                {c.whyDiffer && (
+                  <div className={`comp-why why-${c.match}`}>
+                    <strong>
+                      {c.isPeOnly ? "Context:" : c.match === "close" ? "Assessment:" : "Why they differ:"}
+                    </strong>{" "}
+                    {c.whyDiffer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </section>
         ))}
-      </div>
+      </main>
 
-      <div className="content">
-        {renderTab()}
-      </div>
+      <footer className="app-footer">
+        Built with{" "}
+        <a href="https://policyengine.org/uk" target="_blank" rel="noreferrer">PolicyEngine UK</a>
+        {" "}microsimulation &middot; Data from <code>output/results_2026.csv</code> &middot;{" "}
+        <a href="https://policyengine.org/uk/research/uk-childcare-report" target="_blank" rel="noreferrer">
+          Full report
+        </a>
+      </footer>
     </>
   );
 }

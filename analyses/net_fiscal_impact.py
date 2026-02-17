@@ -66,12 +66,30 @@ def run(baseline, year):
         )
         rows.append(row(ANALYSIS, name, "net_cost", net_cost))
 
+    # Record external benchmarks for each bundle
+    externals = {
+        "UC 100% coverage + double caps": 150e6,
+        "30hrs all 1-4yrs + 48 weeks": 2.1e9,
+        "Double funding rates": 5.2e9,
+    }
+    for bundle_name, ext_val in externals.items():
+        rows.append(
+            row(ANALYSIS, bundle_name, "external", ext_val)
+        )
+
     print("\n  External comparison:")
     print(
-        "    IFS: 2023 expansion revised cost ~£1bn "
-        "higher than forecast [1]"
+        "    IFS: 2023 expansion overspent by ~£440m "
+        "(28%) in 2024-25; ~£1bn higher from 2026 [1]"
     )
-    print("    IPPR universal guarantee: £7.7bn net [2]")
+    print(
+        "    IFS: Spending Review added £1.6bn top-up "
+        "for 2025-26 to 2028-29 [1]"
+    )
+    print(
+        "    IPPR universal guarantee: £17.8bn gross, "
+        "£9.7bn net (offset by £8bn employment gains) [2]"
+    )
     print(
         "    Himmelweit/Sevilla: £7.3-17.9bn net "
         "(depending on scope) [3]"
@@ -80,17 +98,22 @@ def run(baseline, year):
         "    Res Foundation 25hrs/47wks for 3-4yr: "
         "~£2.1bn [4]"
     )
+    print(
+        "    CPAG: 85%->100% UC coverage costs "
+        "£150m initially [6]"
+    )
 
     print_references([
         (
             "IFS - Annual Report on Education Spending "
-            "in England 2025-26",
+            "in England 2025-26 (£440m overspend, "
+            "£1.6bn top-up)",
             "https://ifs.org.uk/publications/"
             "annual-report-education-spending-england-2025-26",
         ),
         (
-            "IPPR - A Childcare Guarantee "
-            "(fiscal analysis)",
+            "IPPR / Save the Children - A Childcare "
+            "Guarantee (£17.8bn gross, £9.7bn net)",
             "https://www.ippr.org/articles/"
             "a-childcare-guarantee",
         ),
@@ -101,7 +124,8 @@ def run(baseline, year):
             "a-new-approach-to-childcare/",
         ),
         (
-            "Resolution Foundation - An Equal Start",
+            "Resolution Foundation - An Equal Start "
+            "(25hrs/47wks = £2.1bn)",
             "https://www.resolutionfoundation.org/publications/"
             "an-equal-start/",
         ),
@@ -109,6 +133,12 @@ def run(baseline, year):
             "OBR - Spring Budget 2023 Policy Costings",
             "https://obr.uk/docs/dlm_uploads/"
             "Annexes-March-2023.pdf",
+        ),
+        (
+            "CPAG - Universal Credit: A Three-Step Plan "
+            "(85%->100% = £150m)",
+            "https://cpag.org.uk/news/"
+            "universal-credit-three-step-plan",
         ),
     ])
 

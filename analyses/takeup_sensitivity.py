@@ -79,11 +79,25 @@ def run(baseline, year):
                 row(ANALYSIS, name, f"takeup_{rate}", scaled)
             )
 
-    print("\n  PE childcare report comparison (2025):")
-    print("    TFC:        PE £0.7bn, Gov £0.6bn")
-    print("    Extended:   PE £4.4bn, Gov £2.5bn")
-    print("    Universal:  PE £1.8bn, Gov £1.7bn")
-    print("    Targeted:   PE £0.5bn, Gov £0.6bn")
+    print("\n  Official spending comparison (latest verified):")
+    print("    TFC:        HMRC £632m 2024-25 (826k families) [1]")
+    print("    UC CC:      DWP ~£850m annualised (160k HHs, Aug 2025) [5]")
+    print("    DfE total:  NAO £6.2bn outturn 2024-25 [6]")
+    print("    IFS total:  £8.4bn all public childcare 2024-25 [7]")
+
+    print("\n  Key takeup facts:")
+    print(
+        "    DWP: Only 13% of eligible UC families "
+        "claim the childcare element [5]"
+    )
+    print(
+        "    IFS: Only ~40% of eligible families "
+        "aware of TFC [7]"
+    )
+    print(
+        "    ~63% of children aged 0-4 use formal "
+        "childcare (2023 DfE survey) [4]"
+    )
 
     print("\n  PE calibration methodology:")
     print(
@@ -94,15 +108,11 @@ def run(baseline, year):
         "    Extended hours: imputed via N(15.0, 5.0) "
         "distribution, bounded (0, 40] [3]"
     )
-    print(
-        "    ~63% of children aged 0-4 use formal "
-        "childcare (2023 DfE survey) [4]"
-    )
 
     print_references([
         (
             "HMRC - Tax-Free Childcare Statistics "
-            "September 2025",
+            "September 2025 (£632m, 826k families)",
             "https://www.gov.uk/government/statistics/"
             "tax-free-childcare-statistics-september-2025",
         ),
@@ -127,16 +137,24 @@ def run(baseline, year):
             "parents-2023",
         ),
         (
-            "IFS - The health of the early years sector "
-            "(takeup data)",
-            "https://ifs.org.uk/publications/"
-            "health-early-years-sector",
+            "DWP - UC Childcare Element Statistics "
+            "to August 2025 (160k HHs, 13% takeup)",
+            "https://www.gov.uk/government/statistics/"
+            "universal-credit-statistics-29-april-2013-"
+            "to-9-october-2025",
         ),
         (
-            "Coram Family and Childcare Survey 2024 "
-            "(parental awareness)",
-            "https://www.coram.org.uk/resource/"
-            "childcare-survey-2024",
+            "NAO - DfE Overview 2024-25 "
+            "(£6.2bn early years outturn)",
+            "https://www.nao.org.uk/overviews/"
+            "department-for-education-2024-25/",
+        ),
+        (
+            "IFS - Annual Report on Education Spending "
+            "2025-26 (£8.4bn total, £8.7bn entitlements)",
+            "https://ifs.org.uk/publications/"
+            "annual-report-education-spending-"
+            "england-2025-26",
         ),
     ])
 

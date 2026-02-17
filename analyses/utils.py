@@ -42,14 +42,17 @@ def reform_sim(parameter_changes):
     return Microsimulation(scenario=scenario)
 
 
-def row(analysis, scenario, metric, value):
+def row(analysis, scenario, metric, value, year=None):
     """Build a single CSV result row dict."""
-    return {
+    d = {
         "analysis": analysis,
         "scenario": scenario,
         "metric": metric,
         "value": value,
     }
+    if year is not None:
+        d["year"] = year
+    return d
 
 
 def run_scenarios(scenarios, output_vars, baseline, year):

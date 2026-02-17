@@ -51,19 +51,36 @@ def run(baseline, year):
 
     print("\n  External comparison:")
     print(
-        "    HMRC: Average quarterly TFC payment ~£400 [1]"
+        "    HMRC: TFC cost £632m in 2024-25 "
+        "(826k families) [1]"
     )
     print(
-        "    Childcare Payments Act 2014: sets statutory "
-        "framework for TFC [2]"
+        "    HMRC: Average annual top-up ~£766 per "
+        "family (£632m / 826k), well below £2k cap [1]"
+    )
+    print(
+        "    HMRC: Average monthly top-up £91-93 "
+        "(Q3 2025), suggesting most don't hit cap [1]"
+    )
+    print(
+        "    OBR: Originally forecast TFC at £1bn/yr "
+        "by 2021-22; never achieved [2]"
     )
 
     print_references([
         (
             "HMRC - Tax-Free Childcare Statistics "
-            "September 2025",
+            "September 2025 (£632m, £91-93/mo avg)",
             "https://www.gov.uk/government/statistics/"
             "tax-free-childcare-statistics-september-2025",
+        ),
+        (
+            "Early Years Alliance / OBR - TFC "
+            "underspend (forecast £1bn/yr, actual £236m "
+            "in 2019-20)",
+            "https://www.eyalliance.org.uk/news/2021/11/"
+            "new-data-reveals-huge-tax-free-childcare-"
+            "underspend",
         ),
         (
             "Childcare Payments Act 2014",

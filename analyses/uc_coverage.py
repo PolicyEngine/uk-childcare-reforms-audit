@@ -4,6 +4,8 @@ from .utils import (
     get_baseline,
     parse_args,
     run_scenarios,
+    reform_sim,
+    fmt,
     row,
     print_references,
 )
@@ -50,15 +52,58 @@ def run(baseline, year):
                     totals["Combined"] - base)
             )
 
+    # ── Like-for-like: CPAG (85%→100%, 2024) ──────────────
+    # CPAG costs 85%→100% at £150m. They base this on the
+    # ~160k households currently claiming (13% of eligible).
+    # PE models the full eligible population.
+    # Run at year 2024 to match CPAG's costing period.
+    lfl_year = 2024
+    lfl_y = str(lfl_year)
+    lfl_base = float(
+        baseline.calculate("uc_childcare_element", lfl_year).sum()
+    )
+    lfl_sim = reform_sim({
+        "gov.dwp.universal_credit.elements.childcare"
+        ".coverage_rate": {lfl_y: 1.0},
+    })
+    lfl_reform = float(
+        lfl_sim.calculate("uc_childcare_element", lfl_year).sum()
+    )
+    lfl_delta = lfl_reform - lfl_base
+    print(f"\n  ── Like-for-like: CPAG (year {lfl_year}) ──")
+    print(f"    PE  (85%→100%, {lfl_year}): delta {fmt(lfl_delta, 'bn')}")
+    print(f"    CPAG estimate:             £150m")
+    print(f"    Note: CPAG covers ~160k current claimants (13%);")
+    print(f"          PE models full eligible population")
+    rows.append(
+        row(ANALYSIS, "CPAG like-for-like (100%, 2024)",
+            "delta", lfl_delta, year=lfl_year)
+    )
+    rows.append(
+        row(ANALYSIS, "CPAG like-for-like (100%, 2024)",
+            "external", 150e6, year=lfl_year)
+    )
+
     print("\n  External comparison:")
-    print("    Res Foundation: recommend 100% coverage [1]")
-    print("    IPPR: recommend 100% coverage [2]")
+    print("    CPAG: 85%->100% coverage costs £150m initially [1]")
+    print("    Res Foundation: recommend 100% coverage [2]")
+    print("    IPPR: recommend 100% coverage [3]")
     print(
-        "    DWP Stat-Xplore: UC childcare element spend "
-        "~£1.0bn in 2023-24 [3]"
+        "    DWP: UC CC element ~£850m annualised "
+        "(160k HHs, £420/mo avg, Aug 2025) [4]"
+    )
+    print(
+        "    DWP: Only 13% of eligible UC families "
+        "claim the childcare element [4]"
     )
 
     print_references([
+        (
+            "CPAG - Universal Credit: A Three-Step Plan "
+            "(2024, costs 85%->100% at £150m)",
+            "https://cpag.org.uk/news/"
+            "universal-credit-three-step-plan",
+        ),
         (
             "Resolution Foundation - Costly Childcare "
             "(June 2023)",
@@ -71,9 +116,11 @@ def run(baseline, year):
             "a-childcare-guarantee",
         ),
         (
-            "DWP - UC Statistics: Childcare Costs "
-            "(Stat-Xplore)",
-            "https://stat-xplore.dwp.gov.uk/",
+            "DWP - UC Childcare Element Statistics "
+            "to August 2025 (160k HHs, £420/mo, 13% takeup)",
+            "https://www.gov.uk/government/statistics/"
+            "universal-credit-statistics-29-april-2013-"
+            "to-9-october-2025",
         ),
         (
             "The Universal Credit (Childcare Costs) "

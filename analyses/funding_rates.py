@@ -4,6 +4,8 @@ from .utils import (
     get_baseline,
     parse_args,
     run_scenarios,
+    reform_sim,
+    fmt,
     row,
     print_references,
 )
@@ -14,8 +16,12 @@ ANALYSIS = "funding_rates"
 def run(baseline, year):
     y = str(year)
     print(
-        "  Current: Age <2: £11.22/hr, "
+        "  Current (2024-25): Age <2: £11.22/hr, "
         "Age 2: £8.28/hr, Age 3+: £5.88/hr"
+    )
+    print(
+        "  DfE 2025-26 rates: Age <2: £11.54/hr, "
+        "Age 2: £8.53/hr, Age 3+: £6.12/hr"
     )
     print("  WBG estimates a £5.2bn funding gap in 2025-26")
 
@@ -78,24 +84,57 @@ def run(baseline, year):
                     totals["Combined"] - base)
             )
 
+    # Record WBG benchmark
+    # WBG says providers need £9.4bn total (current £4.2bn
+    # + £5.2bn gap). PE "Double rates" is the closest match
+    # (roughly doubling from ~£4.2bn to ~£9.4bn).
+    rows.append(
+        row(ANALYSIS, "WBG like-for-like (close funding gap)",
+            "external_total_needed", 9.4e9)
+    )
+    rows.append(
+        row(ANALYSIS, "WBG like-for-like (close funding gap)",
+            "external_gap", 5.2e9)
+    )
+
     print("\n  External comparison:")
     print("    WBG: Total needed £9.4bn (gap of £5.2bn) [1]")
     print(
-        "    DfE: Published hourly funding rates for "
-        "2024-25 and 2025-26 [2]"
+        "    PE 'Double rates' (£12.95bn) overshoots "
+        "WBG target (£9.4bn). PE '+50% rates' (£9.71bn) "
+        "is closest to WBG's £9.4bn"
+    )
+    print(
+        "    NAO: DfE early years outturn £6.2bn "
+        "in 2024-25, forecast £8.2bn 2025-26 [2]"
+    )
+    print(
+        "    DfE 2025-26 rates: <2: £11.54/hr (+3.4%), "
+        "2: £8.53/hr (+3.3%), 3+: £6.12/hr (+4.1%) [3]"
+    )
+    print(
+        "    DfE: Additional £75m revenue funding "
+        "for 2025-26 to support expansion [3]"
     )
 
     print_references([
         (
             "Women's Budget Group - Childcare Funding Gap "
-            "Analysis",
+            "(£5.2bn shortfall)",
             "https://wbg.org.uk/analysis/"
             "the-childcare-funding-gap/",
         ),
         (
-            "DfE - Early Years Funding Rates 2024-25",
+            "NAO - DfE Overview 2024-25 "
+            "(£6.2bn outturn, £8.2bn forecast)",
+            "https://www.nao.org.uk/overviews/"
+            "department-for-education-2024-25/",
+        ),
+        (
+            "DfE - Early Years Funding 2025-26 "
+            "Operational Guide",
             "https://www.gov.uk/government/publications/"
-            "early-years-funding-2024-to-2025",
+            "early-years-funding-2025-to-2026",
         ),
         (
             "IFS - Annual Report on Education Spending "

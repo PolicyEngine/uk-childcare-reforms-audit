@@ -96,36 +96,57 @@ def run(baseline, year):
 
     print("\n  External comparison:")
     print(
-        "    IPPR: Largest gains to lowest-income "
-        "households [1]"
+        "    IFS: New entitlements benefit only 20% "
+        "of families earning <£20k, but 80% of "
+        "those earning >£45k [1]"
     )
     print(
-        "    Res Foundation: Part-time cleaners lose "
-        "£7/wk vs not working [2]"
+        "    IFS: Bottom 30% see 'almost no direct "
+        "benefit' from new entitlements [1]"
     )
     print(
-        "    IFS: Higher earners benefit more from TFC "
-        "than UC families [3]"
+        "    IFS: Only 13% of eligible families in "
+        "bottom third of income [1]"
+    )
+    print(
+        "    IPPR: Only 36% of poorest fifth use "
+        "formal childcare vs 73% of highest-earning [2]"
+    )
+    print(
+        "    IFS: Five-sixths of new entitlement spend "
+        "substitutes care parents would have paid for [1]"
     )
 
     print_references([
         (
-            "IPPR - A Childcare Guarantee "
-            "(distributional analysis)",
-            "https://www.ippr.org/articles/"
-            "a-childcare-guarantee",
+            "IFS - New childcare entitlements have "
+            "little to offer poorest families "
+            "(20% vs 80%, bottom 30% no benefit)",
+            "https://ifs.org.uk/news/"
+            "new-childcare-entitlements-have-little-"
+            "offer-poorest-families",
+        ),
+        (
+            "IPPR / Save the Children - Two-thirds of "
+            "poorest families miss out "
+            "(36% vs 73% formal childcare use)",
+            "https://www.savethechildren.org.uk/news/"
+            "media-centre/press-releases/2024/"
+            "two-thirds-poorest-families-miss-out-"
+            "childcare-government",
+        ),
+        (
+            "IFS - Annual Report on Education Spending "
+            "2025-26 (distributional data)",
+            "https://ifs.org.uk/publications/"
+            "annual-report-education-spending-england-"
+            "2025-26",
         ),
         (
             "Resolution Foundation - Costly Childcare "
             "(distributional impact)",
             "https://www.resolutionfoundation.org/publications/"
             "costly-childcare/",
-        ),
-        (
-            "IFS - The health of the early years sector "
-            "(distributional data)",
-            "https://ifs.org.uk/publications/"
-            "health-early-years-sector",
         ),
     ])
 

@@ -1,6 +1,6 @@
 """Baseline childcare spending analysis."""
 
-from .utils import get_baseline, parse_args, fmt, row, print_references
+from .utils import get_baseline, parse_args, fmt, row, print_references, reform_sim
 
 ANALYSIS = "baseline"
 
@@ -35,29 +35,64 @@ def run(baseline, year):
     print(f"  {'TOTAL':55s} {fmt(total, 'bn'):>12s}")
     rows.append(row(ANALYSIS, "baseline", "total", total))
 
-    print("\n  PE childcare report comparison (2025 estimates):")
-    print("    TFC:        PE report £0.7bn [1]")
-    print("    Extended:   PE report £4.4bn [1]")
-    print("    Universal:  PE report £1.8bn [1]")
-    print("    Targeted:   PE report £0.5bn [1]")
+    # ── Like-for-like: run at external benchmark years ──────
+    externals = {
+        2025: {
+            "label": "IFS 2025-26",
+            "total": 10.5e9,
+            "tfc": 632e6,
+        },
+        2024: {
+            "label": "IFS/HMRC 2024-25",
+            "total": 8.4e9,
+            "tfc": 632e6,
+        },
+    }
 
-    print("\n  Government-reported spending (2024):")
-    print("    TFC:        Gov £0.6bn [2]")
-    print("    Extended:   Gov £2.5bn [3]")
-    print("    Universal:  Gov £1.7bn [3]")
-    print("    Targeted:   Gov £0.6bn [3]")
-    print("    UC CC:      DWP ~£1.0bn in 2023-24 [4]")
+    for lfl_year, ext in externals.items():
+        print(f"\n  ── Like-for-like: PE at year {lfl_year} "
+              f"({ext['label']}) ──")
+        lfl_total = 0
+        for label, var in variables.items():
+            val = float(baseline.calculate(var, lfl_year).sum())
+            lfl_total += val
+            print(f"    {label:55s} {fmt(val, 'bn'):>12s}")
+            rows.append(
+                row(ANALYSIS, f"baseline_{lfl_year}", var,
+                    val, year=lfl_year)
+            )
+        print(f"    {'TOTAL':55s} {fmt(lfl_total, 'bn'):>12s}")
+        print(f"    External total ({ext['label']}): "
+              f"{fmt(ext['total'], 'bn')}")
+        rows.append(
+            row(ANALYSIS, f"baseline_{lfl_year}", "total",
+                lfl_total, year=lfl_year)
+        )
+        rows.append(
+            row(ANALYSIS, f"baseline_{lfl_year}", "external_total",
+                ext["total"], year=lfl_year)
+        )
+
+    print(f"\n  PE baseline total ({year}): {fmt(total, 'bn')}")
+
+    print("\n  Official spending (latest verified):")
+    print("    TFC:        HMRC £632m in 2024-25 (826k families) [2]")
+    print("    UC CC:      DWP ~£850m annualised (160k HHs × £420/mo, Aug 2025) [4]")
+    print("    DfE total:  NAO £6.2bn outturn 2024-25, £8.2bn forecast 2025-26 [7]")
 
     print("\n  Other external estimates:")
     print(
-        "    IFS: Total early years spending "
-        "~£8.7bn in 2025-26 [5]"
+        "    IFS: Total public childcare spending "
+        "£8.4bn 2024-25, ~£10.5bn 2025-26 [5]"
+    )
+    print(
+        "    IFS: Free entitlement spending "
+        "£8.7bn in 2025-26 [5]"
     )
     print(
         "    OBR: 2023 childcare expansion alone "
-        "~£3.3bn in 2025-26 [6]"
+        "~£3.3bn in 2025-26, £4.1bn by 2027-28 [6]"
     )
-    print(f"    PE baseline total ({year}): {fmt(total, 'bn')}")
 
     print_references([
         (
@@ -68,7 +103,7 @@ def run(baseline, year):
         ),
         (
             "HMRC - Tax-Free Childcare Statistics "
-            "September 2025",
+            "September 2025 (£632m, 826k families)",
             "https://www.gov.uk/government/statistics/"
             "tax-free-childcare-statistics-september-2025",
         ),
@@ -80,29 +115,30 @@ def run(baseline, year):
             "funded-early-education-and-childcare/2024",
         ),
         (
-            "DWP - Universal Credit Statistics "
-            "(childcare costs via Stat-Xplore)",
-            "https://stat-xplore.dwp.gov.uk/",
+            "DWP - UC Childcare Element Statistics "
+            "to August 2025 (160k HHs, £420/mo avg)",
+            "https://www.gov.uk/government/statistics/"
+            "universal-credit-statistics-29-april-2013-"
+            "to-9-october-2025",
         ),
         (
             "IFS - Annual Report on Education Spending "
-            "in England 2025-26",
+            "in England 2025-26 (£8.7bn free entitlements)",
             "https://ifs.org.uk/publications/"
             "annual-report-education-spending-"
             "england-2025-26",
         ),
         (
             "OBR - Spring Budget 2023 Childcare "
-            "Expansion Costing",
+            "Expansion Costing (£3.3bn 2025-26)",
             "https://obr.uk/docs/dlm_uploads/"
             "Annexes-March-2023.pdf",
         ),
         (
-            "DfE - Education Provision: Children Under 5 "
-            "(funded entitlements)",
-            "https://explore-education-statistics"
-            ".service.gov.uk/find-statistics/"
-            "education-provision-children-under-5",
+            "NAO - DfE Overview 2024-25 "
+            "(£6.2bn outturn, £8.2bn forecast 2025-26)",
+            "https://www.nao.org.uk/overviews/"
+            "department-for-education-2024-25/",
         ),
     ])
 

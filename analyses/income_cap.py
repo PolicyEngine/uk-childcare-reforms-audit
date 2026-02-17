@@ -19,11 +19,23 @@ def run(baseline, year):
     results = run_scenarios(
         {
             "Baseline (£100k cap)": {},
+            "£120k cap (Govt lower)": {
+                "gov.dfe.extended_childcare_entitlement"
+                ".income.limit": {y: 120_000},
+                "gov.hmrc.tax_free_childcare.income"
+                ".income_limit": {y: 120_000},
+            },
             "£150k cap": {
                 "gov.dfe.extended_childcare_entitlement"
                 ".income.limit": {y: 150_000},
                 "gov.hmrc.tax_free_childcare.income"
                 ".income_limit": {y: 150_000},
+            },
+            "£160k cap (Govt upper)": {
+                "gov.dfe.extended_childcare_entitlement"
+                ".income.limit": {y: 160_000},
+                "gov.hmrc.tax_free_childcare.income"
+                ".income_limit": {y: 160_000},
             },
             "£200k cap": {
                 "gov.dfe.extended_childcare_entitlement"
@@ -59,20 +71,39 @@ def run(baseline, year):
                     totals["Combined"] - base)
             )
 
+    # Record external benchmark for £120k-£160k range
+    rows.append(
+        row(ANALYSIS, "Govt estimate (£120k-£160k)",
+            "external", 1.4e9)
+    )
+
     print("\n  External comparison:")
     print(
-        "    HMRC guidance: £100k adjusted net income "
-        "threshold [1]"
+        "    Government: Raising to £120-160k per-parent "
+        "threshold would cost £1.4bn (TFC + extended "
+        "hours combined) [1]"
+    )
+    print(
+        "    PE £120k cap and £160k cap scenarios "
+        "bracket the Government's estimate"
     )
     print(
         "    IFS: Higher earners benefit disproportionately "
         "from TFC vs UC families [2]"
     )
+    print(
+        "    IFA Magazine: 2023 expansion made the "
+        "£100k cliff-edge more punitive [1]"
+    )
 
     print_references([
         (
-            "HMRC - Tax-Free Childcare Eligibility Criteria",
-            "https://www.gov.uk/tax-free-childcare",
+            "Government estimate (via AJ Bell / IFA "
+            "Magazine): £1.4bn for raising to "
+            "£120-160k household threshold",
+            "https://www.ajbell.co.uk/news/"
+            "beat-ps100000-tax-trap-cost-could-cost-"
+            "parents-tens-thousands",
         ),
         (
             "IFS - The health of the early years sector",
