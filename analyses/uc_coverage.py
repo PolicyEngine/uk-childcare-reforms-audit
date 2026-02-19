@@ -1,9 +1,13 @@
-"""Analysis: Increase UC childcare coverage rate from 85%."""
+"""Analysis: Increase UC childcare coverage rate from 85%.
+
+Measures the net change in actual UC payments (post-taper) rather than
+the gross uc_childcare_element (pre-taper component), since the 55%
+earnings taper means the fiscal cost is lower than the gross element.
+"""
 
 from .utils import (
     get_baseline,
     parse_args,
-    run_scenarios,
     reform_sim,
     fmt,
     row,
@@ -13,44 +17,76 @@ from .utils import (
 ANALYSIS = "uc_coverage"
 
 
+def _uc_total(sim, year):
+    """Total universal_credit payments."""
+    return float(sim.calculate("universal_credit", year).sum())
+
+
 def run(baseline, year):
     y = str(year)
     print("  UC childcare element covers 85% of costs (since 2023).")
     print("  Multiple orgs recommend moving to 100%.")
+    print("  Measuring net change in total UC payments (post-taper).")
 
-    results = run_scenarios(
-        {
-            "Baseline (85%)": {},
-            "90% coverage": {
-                "gov.dwp.universal_credit.elements.childcare"
-                ".coverage_rate": {y: 0.90},
-            },
-            "95% coverage": {
-                "gov.dwp.universal_credit.elements.childcare"
-                ".coverage_rate": {y: 0.95},
-            },
-            "100% coverage": {
-                "gov.dwp.universal_credit.elements.childcare"
-                ".coverage_rate": {y: 1.0},
-            },
+    scenarios = {
+        "Baseline (85%)": {},
+        "90% coverage": {
+            "gov.dwp.universal_credit.elements.childcare"
+            ".coverage_rate": {y: 0.90},
         },
-        [("UC CC", "uc_childcare_element")],
-        baseline,
-        year,
-    )
+        "95% coverage": {
+            "gov.dwp.universal_credit.elements.childcare"
+            ".coverage_rate": {y: 0.95},
+        },
+        "100% coverage": {
+            "gov.dwp.universal_credit.elements.childcare"
+            ".coverage_rate": {y: 1.0},
+        },
+    }
+
+    # Calculate total UC payments for each scenario
+    uc_totals = {}
+    for sc_name, params in scenarios.items():
+        if params:
+            sim = reform_sim(params)
+        else:
+            sim = baseline
+        uc_totals[sc_name] = _uc_total(sim, year)
+
+    base_uc = uc_totals["Baseline (85%)"]
 
     rows = []
-    base = results["Baseline (85%)"]["Combined"]
-    for sc, totals in results.items():
-        rows.append(
-            row(ANALYSIS, sc, "uc_childcare_element",
-                totals["Combined"])
+    for sc_name in scenarios:
+        delta = uc_totals[sc_name] - base_uc
+        print(
+            f"    {sc_name:50s} "
+            f"UC: {fmt(uc_totals[sc_name], 'bn'):>12s}"
+            f"  delta: {fmt(delta, 'bn')}"
         )
-        if sc != "Baseline (85%)":
+        rows.append(
+            row(ANALYSIS, sc_name, "universal_credit",
+                uc_totals[sc_name])
+        )
+        if sc_name != "Baseline (85%)":
             rows.append(
-                row(ANALYSIS, sc, "delta",
-                    totals["Combined"] - base)
+                row(ANALYSIS, sc_name, "delta", delta)
             )
+
+    # Also show gross element for reference
+    gross_base = float(
+        baseline.calculate("uc_childcare_element", year).sum()
+    )
+    reform_100 = reform_sim({
+        "gov.dwp.universal_credit.elements.childcare"
+        ".coverage_rate": {y: 1.0},
+    })
+    gross_100 = float(
+        reform_100.calculate("uc_childcare_element", year).sum()
+    )
+    print(f"\n    (Gross element for reference: "
+          f"baseline {fmt(gross_base, 'bn')}, "
+          f"100%: {fmt(gross_100, 'bn')}, "
+          f"gross delta: {fmt(gross_100 - gross_base, 'bn')})")
 
     # ── Like-for-like: CPAG (85%→100%, 2024) ──────────────
     # CPAG costs 85%→100% at £150m. They base this on the
@@ -59,19 +95,15 @@ def run(baseline, year):
     # Run at year 2024 to match CPAG's costing period.
     lfl_year = 2024
     lfl_y = str(lfl_year)
-    lfl_base = float(
-        baseline.calculate("uc_childcare_element", lfl_year).sum()
-    )
+    lfl_base_uc = _uc_total(baseline, lfl_year)
     lfl_sim = reform_sim({
         "gov.dwp.universal_credit.elements.childcare"
         ".coverage_rate": {lfl_y: 1.0},
     })
-    lfl_reform = float(
-        lfl_sim.calculate("uc_childcare_element", lfl_year).sum()
-    )
-    lfl_delta = lfl_reform - lfl_base
+    lfl_reform_uc = _uc_total(lfl_sim, lfl_year)
+    lfl_delta = lfl_reform_uc - lfl_base_uc
     print(f"\n  ── Like-for-like: CPAG (year {lfl_year}) ──")
-    print(f"    PE  (85%→100%, {lfl_year}): delta {fmt(lfl_delta, 'bn')}")
+    print(f"    PE  (85%→100%, {lfl_year}): net UC delta {fmt(lfl_delta, 'bn')}")
     print(f"    CPAG estimate:             £150m")
     print(f"    Note: CPAG covers ~160k current claimants (13%);")
     print(f"          PE models full eligible population")

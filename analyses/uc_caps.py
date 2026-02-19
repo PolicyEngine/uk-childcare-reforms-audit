@@ -1,9 +1,13 @@
-"""Analysis: Increase UC childcare element caps."""
+"""Analysis: Increase UC childcare element caps.
+
+Measures the net change in actual UC payments (post-taper) rather than
+the gross uc_childcare_element (pre-taper component), since the 55%
+earnings taper means the fiscal cost is lower than the gross element.
+"""
 
 from .utils import (
     get_baseline,
     parse_args,
-    run_scenarios,
     reform_sim,
     fmt,
     row,
@@ -13,42 +17,57 @@ from .utils import (
 ANALYSIS = "uc_caps"
 
 
+def _uc_total(sim, year):
+    """Total universal_credit payments."""
+    return float(sim.calculate("universal_credit", year).sum())
+
+
 def run(baseline, year):
     y = str(year)
     print("  Current caps: £1,014.63 (1 child), £1,739.37 (2+)")
+    print("  Measuring net change in total UC payments (post-taper).")
 
-    results = run_scenarios(
-        {
-            "Baseline": {},
-            "+50% caps": {
-                "gov.dwp.universal_credit.elements.childcare"
-                ".cap.1": {y: 1547.82},
-                "gov.dwp.universal_credit.elements.childcare"
-                ".cap.2": {y: 2653.41},
-            },
-            "Double caps": {
-                "gov.dwp.universal_credit.elements.childcare"
-                ".cap.1": {y: 2063.76},
-                "gov.dwp.universal_credit.elements.childcare"
-                ".cap.2": {y: 3537.88},
-            },
+    scenarios = {
+        "Baseline": {},
+        "+50% caps": {
+            "gov.dwp.universal_credit.elements.childcare"
+            ".cap.1": {y: 1547.82},
+            "gov.dwp.universal_credit.elements.childcare"
+            ".cap.2": {y: 2653.41},
         },
-        [("UC CC", "uc_childcare_element")],
-        baseline,
-        year,
-    )
+        "Double caps": {
+            "gov.dwp.universal_credit.elements.childcare"
+            ".cap.1": {y: 2063.76},
+            "gov.dwp.universal_credit.elements.childcare"
+            ".cap.2": {y: 3537.88},
+        },
+    }
+
+    uc_totals = {}
+    for sc_name, params in scenarios.items():
+        if params:
+            sim = reform_sim(params)
+        else:
+            sim = baseline
+        uc_totals[sc_name] = _uc_total(sim, year)
+
+    base_uc = uc_totals["Baseline"]
 
     rows = []
-    base = results["Baseline"]["Combined"]
-    for sc, totals in results.items():
-        rows.append(
-            row(ANALYSIS, sc, "uc_childcare_element",
-                totals["Combined"])
+    for sc_name in scenarios:
+        delta = uc_totals[sc_name] - base_uc
+        print(
+            f"    {sc_name:50s} "
+            f"UC: {fmt(uc_totals[sc_name], 'bn'):>12s}"
+            f"  delta: {fmt(delta, 'bn')}"
         )
-        if sc != "Baseline":
+        rows.append(
+            row(ANALYSIS, sc_name, "universal_credit",
+                uc_totals[sc_name])
+        )
+        if sc_name != "Baseline":
             rows.append(
-                row(ANALYSIS, sc, "delta",
-                    totals["Combined"] - base)
+                row(ANALYSIS, sc_name, "delta", delta)
             )
 
     # ── Like-for-like: HMT 2023 cap uprating ────────────
@@ -64,13 +83,9 @@ def run(baseline, year):
         "gov.dwp.universal_credit.elements.childcare"
         ".cap.2": {lfl_y: 1108.04},
     })
-    old_val = float(
-        old_caps_sim.calculate("uc_childcare_element", lfl_year).sum()
-    )
-    new_val = float(
-        baseline.calculate("uc_childcare_element", lfl_year).sum()
-    )
-    lfl_delta = new_val - old_val
+    old_uc = _uc_total(old_caps_sim, lfl_year)
+    new_uc = _uc_total(baseline, lfl_year)
+    lfl_delta = new_uc - old_uc
     print(f"\n  ── Like-for-like: HMT 2023 uprating ──")
     print(f"    PE  (£646→£951 / £1,108→£1,630, {lfl_year}): "
           f"delta {fmt(lfl_delta, 'bn')}")

@@ -5,10 +5,33 @@ from .utils import get_baseline, parse_args, fmt, row, print_references, reform_
 ANALYSIS = "baseline"
 
 
+def _uc_childcare_net_cost(sim_with_cc, sim_without_cc, year):
+    """Net UC cost of childcare = UC(cc=on) - UC(cc=off).
+
+    The childcare element is a pre-taper component of UC maximum amount.
+    After the 55% earnings taper, the actual government spend is less
+    than the gross element.  Differencing total UC payments gives the
+    true fiscal cost.
+    """
+    uc_with = float(sim_with_cc.calculate("universal_credit", year).sum())
+    uc_without = float(
+        sim_without_cc.calculate("universal_credit", year).sum()
+    )
+    return uc_with - uc_without
+
+
 def run(baseline, year):
+    y = str(year)
+
+    # Build a "no UC childcare" counterfactual (coverage_rate = 0)
+    no_uc_cc = reform_sim({
+        "gov.dwp.universal_credit.elements.childcare"
+        ".coverage_rate": {y: 0.0},
+    })
+
     variables = {
         "Tax-Free Childcare": "tax_free_childcare",
-        "UC Childcare Element": "uc_childcare_element",
+        "UC Childcare Element (net UC cost)": None,  # special
         "WTC Childcare Element": "WTC_childcare_element",
         "Universal Childcare Entitlement (15hrs, 3-5)": (
             "universal_childcare_entitlement"
@@ -27,10 +50,23 @@ def run(baseline, year):
     rows = []
     total = 0
     for label, var in variables.items():
-        val = float(baseline.calculate(var, year).sum())
+        if var is None:
+            # UC childcare: net cost via differencing
+            val = _uc_childcare_net_cost(baseline, no_uc_cc, year)
+            var_name = "uc_childcare_element"
+            gross = float(
+                baseline.calculate("uc_childcare_element", year).sum()
+            )
+            print(
+                f"  {label:55s} {fmt(val, 'bn'):>12s}"
+                f"  (gross element: {fmt(gross, 'bn')})"
+            )
+        else:
+            val = float(baseline.calculate(var, year).sum())
+            var_name = var
+            print(f"  {label:55s} {fmt(val, 'bn'):>12s}")
         total += val
-        print(f"  {label:55s} {fmt(val, 'bn'):>12s}")
-        rows.append(row(ANALYSIS, "baseline", var, val))
+        rows.append(row(ANALYSIS, "baseline", var_name, val))
 
     print(f"  {'TOTAL':55s} {fmt(total, 'bn'):>12s}")
     rows.append(row(ANALYSIS, "baseline", "total", total))
@@ -50,15 +86,27 @@ def run(baseline, year):
     }
 
     for lfl_year, ext in externals.items():
+        lfl_y = str(lfl_year)
+        lfl_no_uc_cc = reform_sim({
+            "gov.dwp.universal_credit.elements.childcare"
+            ".coverage_rate": {lfl_y: 0.0},
+        })
         print(f"\n  ── Like-for-like: PE at year {lfl_year} "
               f"({ext['label']}) ──")
         lfl_total = 0
         for label, var in variables.items():
-            val = float(baseline.calculate(var, lfl_year).sum())
+            if var is None:
+                val = _uc_childcare_net_cost(
+                    baseline, lfl_no_uc_cc, lfl_year
+                )
+                var_name = "uc_childcare_element"
+            else:
+                val = float(baseline.calculate(var, lfl_year).sum())
+                var_name = var
             lfl_total += val
             print(f"    {label:55s} {fmt(val, 'bn'):>12s}")
             rows.append(
-                row(ANALYSIS, f"baseline_{lfl_year}", var,
+                row(ANALYSIS, f"baseline_{lfl_year}", var_name,
                     val, year=lfl_year)
             )
         print(f"    {'TOTAL':55s} {fmt(lfl_total, 'bn'):>12s}")
